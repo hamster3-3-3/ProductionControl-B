@@ -3,9 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>製管會項目填寫表單</title>
+    <title>製管會項目填寫表單 (含PPT下載)</title>
     <!-- 引入 Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入 PptxGenJS 用於生成簡報 -->
+    <script src="https://cdn.jsdelivr.net/gh/gitbrent/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
+
     <style>
         /* 使用 Inter 字體 */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
@@ -44,6 +47,9 @@
                         },
                         red: {
                             100: '#fee2e2', 700: '#b91c1c', 200: '#fecaca', 400: '#f87171'
+                        },
+                        orange: {
+                            500: '#f97316', 600: '#ea580c', 700: '#c2410c'
                         }
                     }
                 }
@@ -54,7 +60,6 @@
 <body class="p-4 md:p-8">
 
     <!-- ============ Mobile: 左上角「試產目錄」按鈕 + 抽屜式目錄（避免蓋住表單） ============ -->
-    <!-- 1) 左上角按鈕（僅手機/平板顯示） -->
     <div class="lg:hidden fixed top-4 left-4 z-50">
         <button type="button" id="mobile-toc-open-btn"
             class="flex items-center gap-2 px-4 py-2 bg-white text-teal-700 font-semibold rounded-xl shadow-lg border border-gray-200 hover:bg-teal-50 focus:ring-4 focus:ring-teal-200">
@@ -63,15 +68,12 @@
         </button>
     </div>
 
-    <!-- 2) 背景遮罩（點擊可關閉） -->
+    <!-- 背景遮罩 -->
     <div id="mobile-toc-backdrop" class="hidden lg:hidden fixed inset-0 z-40 bg-black/40"></div>
 
-    <!-- 3) 左側抽屜（off-canvas drawer） -->
-    <!-- 修改重點：加入 flex flex-col 讓內部可以垂直佈局，方便設定滾動區域 -->
+    <!-- 左側抽屜 -->
     <aside id="mobile-toc-drawer"
         class="lg:hidden fixed inset-y-0 left-0 z-50 w-80 max-w-[85vw] bg-white shadow-2xl border-r border-gray-200 transform -translate-x-full transition-transform duration-200 flex flex-col">
-        
-        <!-- 標題區塊：設為 flex-shrink-0 避免被壓縮 -->
         <div class="p-4 border-b border-gray-200 flex items-center justify-between flex-shrink-0">
             <h2 class="text-lg font-extrabold text-teal-700">試產目錄</h2>
             <button type="button" id="mobile-toc-close-btn"
@@ -79,8 +81,6 @@
                 關閉
             </button>
         </div>
-        
-        <!-- 內容列表區塊：設為 flex-1 佔滿剩餘空間，並加入 overflow-y-auto 允許滾動 -->
         <div class="p-4 flex-1 overflow-y-auto">
             <div id="toc-container-mobile" class="space-y-2">
                 <p class="text-sm text-gray-400">點擊商品名稱快速跳轉...</p>
@@ -88,45 +88,46 @@
         </div>
     </aside>
 
-    <!-- NEW: Responsive Wrapper for Sidebar and Content -->
-    <!-- 針對手機：加上 pt-16，避免左上角按鈕遮住內容（尤其是滾到頂端時） -->
+    <!-- NEW: Responsive Wrapper -->
     <div class="max-w-7xl mx-auto flex flex-col lg:flex-row gap-6 pt-16 lg:pt-0">
 
-        <!-- Desktop: 試產目錄 Sidebar (Hidden on mobile, sticky on desktop) -->
+        <!-- Desktop: Sidebar -->
         <div class="hidden lg:block w-72 flex-shrink-0">
-            <!-- 修改重點：加入 max-h-[85vh] 限制最大高度，並加入 overflow-y-auto 允許滾動 -->
             <div class="sticky top-8 p-4 bg-white rounded-xl shadow-xl border border-gray-200 max-h-[85vh] overflow-y-auto">
                 <h2 class="text-xl font-bold text-teal-600 border-b-2 border-teal-100 pb-2 mb-3">試產目錄</h2>
                 <div id="toc-container-desktop" class="space-y-2">
                     <p class="text-sm text-gray-400">點擊商品名稱快速跳轉...</p>
-                    <!-- TOC links will be injected here by JS -->
                 </div>
             </div>
         </div>
 
-        <!-- Main Content Area (Form Container) -->
+        <!-- Main Content Area -->
         <div id="main-content" class="flex-grow">
-
-            <!-- 表單主要容器 -->
             <div id="main-container" class="bg-white rounded-xl shadow-2xl">
-
-                <!-- 表單總標題 -->
                 <div class="p-6 rounded-t-xl bg-gray-50 border-b border-gray-200">
                     <h1 class="text-3xl font-extrabold text-gray-800">製管會項目</h1>
                     <p class="text-gray-500 mt-1">請填寫試產相關資訊及異常/優化追蹤細節。**所有欄位皆為非必填**</p>
                 </div>
 
-                <!-- 放置所有表單實例的容器 -->
                 <div id="forms-wrapper" class="divide-y divide-gray-200">
-                    <!-- 初始表單實例將在此處生成 -->
+                    <!-- 表單將在此生成 -->
                 </div>
 
                 <!-- Master Action Buttons -->
-                <div class="flex justify-center space-x-4 p-6 bg-gray-50 rounded-b-xl border-t border-gray-200">
+                <div class="flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-6 p-6 bg-gray-50 rounded-b-xl border-t border-gray-200">
                     <button type="button" id="submit-all-btn"
-                            class="px-10 py-3 bg-teal-600 text-white font-bold rounded-xl shadow-lg hover:bg-teal-700
-                                    transition duration-300 transform hover:scale-105 focus:ring-4 focus:ring-teal-300">
-                        送出並下載所有項目
+                            class="w-full md:w-auto px-8 py-3 bg-teal-600 text-white font-bold rounded-xl shadow-lg hover:bg-teal-700
+                                    transition duration-300 transform hover:scale-105 focus:ring-4 focus:ring-teal-300 flex items-center justify-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                        下載 CSV 報表
+                    </button>
+                    
+                    <!-- 新增：下載 PPT 按鈕 -->
+                    <button type="button" id="download-ppt-btn"
+                            class="w-full md:w-auto px-8 py-3 bg-orange-600 text-white font-bold rounded-xl shadow-lg hover:bg-orange-700
+                                    transition duration-300 transform hover:scale-105 focus:ring-4 focus:ring-orange-300 flex items-center justify-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" /></svg>
+                        下載簡報 (PPTX)
                     </button>
                 </div>
 
@@ -134,154 +135,100 @@
                 <div id="output-section" class="mt-8 hidden">
                     <h2 class="text-xl font-semibold text-green-700 mb-4 border-b pb-2 px-6">CSV/Excel 輸出內容 (共 <span id="form-count-output">0</span> 筆)</h2>
                     <pre id="form-output" class="bg-gray-800 text-green-300 p-6 rounded-xl shadow-inner overflow-x-auto text-sm mx-6"></pre>
-                    <p class="text-xs text-gray-500 mt-2 px-6">CSV 檔案已自動下載，您可以將上方內容複製到 Excel/試算表中。</p>
+                    <p class="text-xs text-gray-500 mt-2 px-6">CSV 檔案已自動下載。</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- 表單模板 (隱藏，用於複製) -->
+    <!-- 表單模板 -->
     <form id="form-template" class="form-template">
-        <!-- 區塊 1: 試產資訊 -->
         <div class="py-8 border-l-4 border-indigo-500 bg-indigo-50/50">
-            <!-- 標題加入 px-6 確保內邊距 -->
             <h2 class="form-title text-2xl font-extrabold text-indigo-700 mb-6 flex items-center pb-2 border-b border-indigo-200 px-6">
                 <span class="inline-block w-2 h-6 bg-indigo-500 rounded-sm mr-3"></span>
                 試產資訊 #1
             </h2>
-
-            <!-- 商品 (Text) - 加入 px-6 -->
             <div class="mb-6 px-6">
                 <label for="item_name" class="block text-sm font-semibold text-gray-700 mb-1">商品名稱</label>
-                <input type="text" id="item_name" name="商品" placeholder="請輸入完整的商品名稱"
-                        class="form-input focus:ring-indigo-500 focus:border-indigo-500">
+                <input type="text" id="item_name" name="商品" placeholder="請輸入完整的商品名稱" class="form-input focus:ring-indigo-500 focus:border-indigo-500">
             </div>
-
-            <!-- Grid 內容 - 加入 px-6 -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 px-6">
-
-                <!-- 會議日期 (Date) -->
                 <div>
                     <label for="meeting_date" class="block text-sm font-semibold text-gray-700 mb-1">會議日期</label>
-                    <input type="date" id="meeting_date" name="會議日期"
-                            class="form-input focus:ring-indigo-500 focus:border-indigo-500">
+                    <input type="date" id="meeting_date" name="會議日期" class="form-input focus:ring-indigo-500 focus:border-indigo-500">
                 </div>
-
-                <!-- 上市日 (Date) -->
                 <div>
                     <label for="launch_date" class="block text-sm font-semibold text-gray-700 mb-1">上市日</label>
-                    <input type="date" id="launch_date" name="上市日"
-                            class="form-input focus:ring-indigo-500 focus:border-indigo-500">
+                    <input type="date" id="launch_date" name="上市日" class="form-input focus:ring-indigo-500 focus:border-indigo-500">
                 </div>
-
-                <!-- 品類 (Dropdown) -->
                 <div>
                     <label for="category" class="block text-sm font-semibold text-gray-700 mb-1">品類</label>
-                    <select id="category" name="品類"
-                             class="form-input bg-white focus:ring-indigo-500 focus:border-indigo-500">
-                        <!-- Options filled by JS -->
-                    </select>
+                    <select id="category" name="品類" class="form-input bg-white focus:ring-indigo-500 focus:border-indigo-500"></select>
                 </div>
-
-                <!-- 階段 (Dropdown) -->
                 <div>
                     <label for="phase" class="block text-sm font-semibold text-gray-700 mb-1">階段</label>
-                    <select id="phase" name="階段"
-                             class="form-input bg-white focus:ring-indigo-500 focus:border-indigo-500">
-                        <!-- Options filled by JS -->
-                    </select>
+                    <select id="phase" name="階段" class="form-input bg-white focus:ring-indigo-500 focus:border-indigo-500"></select>
                 </div>
-
-                <!-- 主事廠 (Dropdown) -->
                 <div>
                     <label for="main_factory" class="block text-sm font-semibold text-gray-700 mb-1">主事廠</label>
-                    <select id="main_factory" name="主事廠"
-                             class="form-input bg-white focus:ring-indigo-500 focus:border-indigo-500">
-                        <!-- Options filled by JS -->
-                    </select>
+                    <select id="main_factory" name="主事廠" class="form-input bg-white focus:ring-indigo-500 focus:border-indigo-500"></select>
                 </div>
-
-                <!-- 副事廠 (Dropdown) -->
                 <div>
                     <label for="sub_factory" class="block text-sm font-semibold text-gray-700 mb-1">副事廠</label>
-                    <select id="sub_factory" name="副事廠"
-                             class="form-input bg-white focus:ring-indigo-500 focus:border-indigo-500">
-                        <option value="">(無)</option>
-                        <!-- Options filled by JS -->
-                    </select>
+                    <select id="sub_factory" name="副事廠" class="form-input bg-white focus:ring-indigo-500 focus:border-indigo-500"><option value="">(無)</option></select>
                 </div>
             </div>
         </div>
 
-        <!-- 區塊 2: 異常/優化追蹤 -->
         <div class="py-8 border-l-4 border-teal-500 bg-teal-50/50 border-t border-gray-200">
             <h2 class="text-2xl font-extrabold text-teal-700 mb-6 flex items-center pb-2 border-b border-teal-200 px-6">
                 <span class="inline-block w-2 h-6 bg-teal-500 rounded-sm mr-3"></span>
                 異常/優化追蹤
             </h2>
-
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 px-6 mb-6">
                 <div>
                     <label for="proposer" class="block text-sm font-semibold text-gray-700 mb-1">提出者</label>
-                    <input type="text" id="proposer" name="提出者" placeholder="請輸入提出者名稱"
-                            class="form-input focus:ring-teal-500 focus:border-teal-500">
+                    <input type="text" id="proposer" name="提出者" placeholder="請輸入提出者名稱" class="form-input focus:ring-teal-500 focus:border-teal-500">
                 </div>
-
                 <div>
                     <label for="issue_type" class="block text-sm font-semibold text-gray-700 mb-1">類型</label>
-                    <select id="issue_type" name="類型" class="form-input bg-white">
-                        <!-- Options filled by JS -->
-                    </select>
+                    <select id="issue_type" name="類型" class="form-input bg-white"></select>
                 </div>
-
                 <div id="detailed-type-container">
                     <label for="detailed_type" class="block text-sm font-semibold text-gray-700 mb-1">詳細類型</label>
-                    <select id="detailed_type" name="詳細類型" class="form-input bg-white">
-                        <option value="">(請先選擇類型)</option>
-                    </select>
+                    <select id="detailed_type" name="詳細類型" class="form-input bg-white"><option value="">(請先選擇類型)</option></select>
                 </div>
-
                 <div id="responsible-factory-container" class="hidden-collapse">
                     <label for="responsible_factory" class="block text-sm font-semibold text-gray-700 mb-1">責任廠</label>
-                    <select id="responsible_factory" name="責任廠" class="form-input bg-white">
-                        <option value="">(無)</option>
-                    </select>
+                    <select id="responsible_factory" name="責任廠" class="form-input bg-white"><option value="">(無)</option></select>
                 </div>
-
                 <div id="responsible-party-container" class="hidden-collapse">
                     <label for="responsible_party" class="block text-sm font-semibold text-gray-700 mb-1">責任端</label>
-                    <select id="responsible_party" name="責任端" class="form-input bg-white">
-                        <option value="">(無)</option>
-                    </select>
+                    <select id="responsible_party" name="責任端" class="form-input bg-white"><option value="">(無)</option></select>
                 </div>
-
                 <div>
                     <label for="recorder" class="block text-sm font-semibold text-gray-700 mb-1">記錄者</label>
-                    <input type="text" id="recorder" name="記錄者" placeholder="請輸入記錄者名稱"
-                            class="form-input focus:ring-teal-500 focus:border-teal-500">
+                    <input type="text" id="recorder" name="記錄者" placeholder="請輸入記錄者名稱" class="form-input focus:ring-teal-500 focus:border-teal-500">
                 </div>
             </div>
 
-            <!-- 三個大型文字欄位：改為垂直排列（手機版閱讀與填寫更直覺） -->
             <div class="px-6 mt-2 space-y-4">
                 <div>
                     <label for="item_description" class="block text-sm font-semibold text-gray-700 mb-1">項目說明</label>
                     <textarea id="item_description" name="項目說明" rows="6"
-                        placeholder="請描述本次試產／架上品的異常狀況、優化重點或新增規範內容（發生情境、影響範圍、觀察重點）。"
+                        placeholder="請描述本次試產／架上品的異常狀況、優化重點或新增規範內容。"
                         class="form-input h-36 md:h-40 resize-y focus:ring-teal-500 focus:border-teal-500"></textarea>
                 </div>
-
                 <div>
                     <label for="execution_instructions" class="block text-sm font-semibold text-gray-700 mb-1">執行說明</label>
                     <textarea id="execution_instructions" name="執行說明" rows="6"
-                        placeholder="請填寫後續處理方式、修正作法、試產調整方向，或需各單位配合的執行事項。"
+                        placeholder="請填寫後續處理方式、修正作法、試產調整方向。"
                         class="form-input h-36 md:h-40 resize-y focus:ring-teal-500 focus:border-teal-500"></textarea>
                 </div>
-
                 <div>
                     <label for="remarks" class="block text-sm font-semibold text-gray-700 mb-1">備註</label>
                     <textarea id="remarks" name="備註" rows="5"
-                        placeholder="補充說明其他未涵蓋事項，如時程說明、特殊條件、會議補充紀錄等。"
+                        placeholder="補充說明其他未涵蓋事項。"
                         class="form-input h-32 md:h-36 resize-y focus:ring-teal-500 focus:border-teal-500"></textarea>
                 </div>
             </div>
@@ -294,21 +241,13 @@
         </div>
 
         <div class="flex justify-end space-x-4 p-6 bg-gray-50 border-t border-gray-200">
-            <button type="button" class="add-form-btn-local px-6 py-2 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700
-                            transition duration-300 focus:ring-4 focus:ring-indigo-300">
-                新增一筆項目
-            </button>
-            <button type="button" class="remove-form-btn px-6 py-2 bg-red-100 text-red-700 font-semibold rounded-lg shadow-md hover:bg-red-200
-                            transition duration-300 focus:ring-4 focus:ring-red-400">
-                移除當前項目
-            </button>
+            <button type="button" class="add-form-btn-local px-6 py-2 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 transition duration-300 focus:ring-4 focus:ring-indigo-300">新增一筆項目</button>
+            <button type="button" class="remove-form-btn px-6 py-2 bg-red-100 text-red-700 font-semibold rounded-lg shadow-md hover:bg-red-200 transition duration-300 focus:ring-4 focus:ring-red-400">移除當前項目</button>
         </div>
     </form>
 
     <script>
-        let formIndex = 0; // 用於生成唯一 ID 的計數器
-
-        // 【更新】定義所有的下拉式選單選項
+        let formIndex = 0;
         const dropdownOptions = {
             '品類': ['飯糰', '壽司手卷', '主食', '便當', '熱食義麵', '季節調理麵', '沙拉', '小吃', '三明治(調理麵包)', '甜點'],
             '階段': ['架上品', '試產一', '試產二', '試產1-0', '試產1-1', '其他量化'],
@@ -316,65 +255,33 @@
             '責任端': ['生產端', '開發端', '物料端'],
             '類型': ['異常', '優化提案', '優化採用', '新增規範'],
         };
-
-        // 根據「類型」連動的「詳細類型」選項
         const detailedOptionsMap = {
-            '異常': [
-                '良品設定未完善', '不符合指示書設定', '微波狀態不符合設定',
-                '物料未到樣', '賣相不符合指示書設定', '物料異常',
-            ],
+            '異常': ['良品設定未完善', '不符合指示書設定', '微波狀態不符合設定', '物料未到樣', '賣相不符合指示書設定', '物料異常'],
             '優化提案': ['效率優化', '製程優化', '其他優化'],
             '優化採用': ['效率優化', '製程優化', '其他優化'],
-            '新增規範': [],
-            '': [],
+            '新增規範': [], '': []
         };
-
-        // 預填資料 (已根據使用者提供資料更新)
         const preloadedData = [
-            // 12月18日	12月	三明治(調理麵包)	覆盆莓榛果可可三明治(限量36W)	架上品	12月10日	屏榮新豐
             { meeting_date: '2025-12-18', category: '三明治(調理麵包)', item_name: '覆盆莓榛果可可三明治(限量36W)', phase: '架上品', launch_date: '2025-12-10', main_factory: '屏榮新豐' },
-            // 12月18日	12月	三明治(調理麵包)	滿滿起司燻腸洋芋堡	架上品	12月10日	屏榮新豐
             { meeting_date: '2025-12-18', category: '三明治(調理麵包)', item_name: '滿滿起司燻腸洋芋堡', phase: '架上品', launch_date: '2025-12-10', main_factory: '屏榮新豐' },
-            // 12月18日	12月	三明治(調理麵包)	藍莓優格三明治	架上品	12月17日	屏榮新豐
             { meeting_date: '2025-12-18', category: '三明治(調理麵包)', item_name: '藍莓優格三明治', phase: '架上品', launch_date: '2025-12-17', main_factory: '屏榮新豐' },
-            // 12月18日	12月	三明治(調理麵包)	黃金雙層鱈魚招財堡	試產一	1月21日	屏榮新豐
-            // 假設 '1月21日' 是 '2026-01-21'
             { meeting_date: '2025-12-18', category: '三明治(調理麵包)', item_name: '黃金雙層鱈魚招財堡', phase: '試產一', launch_date: '2026-01-21', main_factory: '屏榮新豐' },
-            // 12月18日	12月	三明治(調理麵包)	花生培根歐姆蛋堡	試產二	12月24日	屏榮新豐
             { meeting_date: '2025-12-18', category: '三明治(調理麵包)', item_name: '花生培根歐姆蛋堡', phase: '試產二', launch_date: '2025-12-24', main_factory: '屏榮新豐' },
-            // 12月18日	12月	甜點	棉花糖可可塔	架上品	12月10日	屏榮大溪
             { meeting_date: '2025-12-18', category: '甜點', item_name: '棉花糖可可塔', phase: '架上品', launch_date: '2025-12-10', main_factory: '屏榮大溪' },
-            // 12月18日	12月	甜點	抹茶生巧起司塔	試產一	3月4日	屏榮大溪
-            // 假設 '3月4日' 是 '2026-03-04'
             { meeting_date: '2025-12-18', category: '甜點', item_name: '抹茶生巧起司塔', phase: '試產一', launch_date: '2026-03-04', main_factory: '屏榮大溪' },
-            // 12月18日	12月	甜點	抹茶蒙布朗布丁	試產一	3月11日	屏榮大溪
-            // 假設 '3月11日' 是 '2026-03-11'
             { meeting_date: '2025-12-18', category: '甜點', item_name: '抹茶蒙布朗布丁', phase: '試產一', launch_date: '2026-03-11', main_factory: '屏榮大溪' },
-            // 12月18日	12月	甜點	生巧風味餅乾夾心	試產二	12月24日	屏榮大溪
             { meeting_date: '2025-12-18', category: '甜點', item_name: '生巧風味餅乾夾心', phase: '試產二', launch_date: '2025-12-24', main_factory: '屏榮大溪' },
-            // 12月18日	12月	沙拉	溏心蛋洋芋沙拉	架上品	12月17日	屏榮新豐
             { meeting_date: '2025-12-18', category: '沙拉', item_name: '溏心蛋洋芋沙拉', phase: '架上品', launch_date: '2025-12-17', main_factory: '屏榮新豐' },
-            // 12月18日	12月	沙拉	玉美墨西哥風若醬起司嫩蛋捲	試產二	12月17日	玉美
             { meeting_date: '2025-12-18', category: '沙拉', item_name: '玉美墨西哥風若醬起司嫩蛋捲', phase: '試產二', launch_date: '2025-12-17', main_factory: '玉美' },
-            // 12月18日	12月	沙拉	洋芋沙拉	試產一	12月24日	玉美
             { meeting_date: '2025-12-18', category: '沙拉', item_name: '洋芋沙拉', phase: '試產一', launch_date: '2025-12-24', main_factory: '玉美' },
-            // 12月18日	12月	季節調理麵	鴻運番茄湯麵	試產一	1月21日	屏榮大溪
-            // 假設 '1月21日' 是 '2026-01-21'
             { meeting_date: '2025-12-18', category: '季節調理麵', item_name: '鴻運番茄湯麵', phase: '試產一', launch_date: '2026-01-21', main_factory: '屏榮大溪' },
-            // 12月18日	12月	小吃	蛤蜊燉雞腿湯	架上品	12月10日	連合發
             { meeting_date: '2025-12-18', category: '小吃', item_name: '蛤蜊燉雞腿湯', phase: '架上品', launch_date: '2025-12-10', main_factory: '連合發' },
-            // 12月18日	12月	小吃	香菇油飯	架上品	12月10日	連合發
             { meeting_date: '2025-12-18', category: '小吃', item_name: '香菇油飯', phase: '架上品', launch_date: '2025-12-10', main_factory: '連合發' },
-            // 12月18日	12月	小吃	阿甘剝皮辣椒蒸蛋	架上品	12月17日	連合發
             { meeting_date: '2025-12-18', category: '小吃', item_name: '阿甘剝皮辣椒蒸蛋', phase: '架上品', launch_date: '2025-12-17', main_factory: '連合發' },
-            // 12月18日	12月	小吃	三杯菇菇米血	試產一	1月21日	長家
-            // 假設 '1月21日' 是 '2026-01-21'
             { meeting_date: '2025-12-18', category: '小吃', item_name: '三杯菇菇米血', phase: '試產一', launch_date: '2026-01-21', main_factory: '長家' },
-            // 12月18日	12月	小吃	川味麻辣鍋	試產二	12月24日	連合發
             { meeting_date: '2025-12-18', category: '小吃', item_name: '川味麻辣鍋', phase: '試產二', launch_date: '2025-12-24', main_factory: '連合發' }
         ];
 
-        // 【重要更新】定義所有 Excel 輸出的欄位順序、標題名稱和對應的 Form Field Name
         const outputHeaders = [
             { outputName: '會議日期', formName: '會議日期' },
             { outputName: '月', formName: '會議日期', type: 'month_derived' },
@@ -396,16 +303,13 @@
             { outputName: '記錄者', formName: '記錄者' }
         ];
 
-        // 輔助函數：填充 <select> 標籤
         function populateSelect(selectElement, options, defaultText = "(請選擇)") {
             if (!selectElement) return;
             selectElement.innerHTML = '';
-
             const defaultOption = document.createElement('option');
             defaultOption.value = "";
             defaultOption.textContent = defaultText;
             selectElement.appendChild(defaultOption);
-
             options.forEach(optionText => {
                 const option = document.createElement('option');
                 option.value = optionText;
@@ -414,183 +318,163 @@
             });
         }
 
-        // ==========================================================
-        // 【Mobile TOC Drawer】
-        // ==========================================================
-        function openMobileTOC() {
-            const drawer = document.getElementById('mobile-toc-drawer');
-            const backdrop = document.getElementById('mobile-toc-backdrop');
-            if (!drawer || !backdrop) return;
+        // --- PPT Generation Logic ---
+        function generatePPT() {
+            let pptx = new PptxGenJS();
+            pptx.layout = 'LAYOUT_16x9';
 
-            backdrop.classList.remove('hidden');
-            drawer.classList.remove('-translate-x-full');
-            document.body.classList.add('overflow-hidden');
+            // 取得會議日期 (從第一筆表單抓取，如果沒有則預設)
+            const firstForm = document.querySelector('.tracking-form-instance');
+            let meetingDate = "YYYY/MM/DD";
+            if (firstForm) {
+                const dateInput = firstForm.querySelector('input[name="會議日期"]');
+                if (dateInput && dateInput.value) {
+                    meetingDate = dateInput.value.replace(/-/g, '/');
+                }
+            }
+
+            // --- 頁面 1: 封面 (Cover) ---
+            let slide1 = pptx.addSlide();
+            
+            // 背景裝飾 (簡單的色塊模擬)
+            slide1.addShape(pptx.shapes.RECTANGLE, { x: 0, y: 0, w: '100%', h: '100%', fill: 'F3F4F6' });
+            slide1.addShape(pptx.shapes.RECTANGLE, { x: 0.5, y: 0.5, w: 9, h: 4.5, fill: 'FFFFFF', line: { color: 'CCCCCC', width: 1 } });
+
+            // 封面文字內容
+            slide1.addText("案別", { x: 0.8, y: 0.8, fontSize: 14, color: '666666' });
+            slide1.addText("報告案", { x: 0.8, y: 1.2, fontSize: 24, bold: true, color: '000000' });
+            
+            slide1.addText("會議名稱", { x: 0.8, y: 2.0, fontSize: 14, color: '666666' });
+            slide1.addText("製管會議", { x: 0.8, y: 2.4, fontSize: 20, bold: true, color: '000000' });
+
+            slide1.addText("會議日期", { x: 0.8, y: 3.2, fontSize: 14, color: '666666' });
+            slide1.addText(meetingDate, { x: 0.8, y: 3.6, fontSize: 20, bold: true, color: 'E91E63' }); // 強調日期
+
+            // 右側資訊 (報告人、機密等級等)
+            let rightX = 6;
+            slide1.addText("報告人: 食品研究所", { x: rightX, y: 0.8, fontSize: 14 });
+            slide1.addText("機密等級: ■機密 □極機密", { x: rightX, y: 1.3, fontSize: 14 });
+            slide1.addText("保密年限: ■ 5年 □10年 □永久", { x: rightX, y: 1.8, fontSize: 14 });
+            slide1.addText("保存年限: ■10年 □20年 □永久", { x: rightX, y: 2.3, fontSize: 14 });
+
+            // --- 頁面 2: 大綱 (Agenda) ---
+            let slide2 = pptx.addSlide();
+            slide2.addText("大綱", { x: 0.5, y: 0.5, fontSize: 28, bold: true, color: '004D40' }); // Teal-900 like
+            
+            // 表格資料
+            let rows = [
+                [{ text: "重點摘要", options: { fill: "009688", color: "FFFFFF", bold: true, align: "center" } }, { text: "頁次", options: { fill: "009688", color: "FFFFFF", bold: true, align: "center" } }],
+                ["製管會前會-試產1-0\n次週生產商品指示書檢視-矯正及產線效率優化提案", { text: "1", align: "center" }],
+                ["製管會前會-專案確認\n食研所相關專案會議確認", { text: "2", align: "center" }],
+                ["製管會議-試產品檢視\n試產一、試產二狀況檢視及相關數據報告", { text: "3", align: "center" }],
+                ["製管會議-良品點檢\n新上市兩週架上品點檢狀況報告", { text: "4", align: "center" }]
+            ];
+            
+            slide2.addTable(rows, {
+                x: 0.5, y: 1.2, w: 9,
+                colW: [7, 2],
+                border: { pt: 1, color: "CCCCCC" },
+                fontSize: 16,
+                rowH: 0.8
+            });
+
+            // --- 頁面 3+: 內容頁 (Content Slides) ---
+            const forms = document.querySelectorAll('.tracking-form-instance');
+            let hasContent = false;
+
+            forms.forEach((form) => {
+                const formData = new FormData(form);
+                const itemName = formData.get('商品') || '';
+                const phase = formData.get('階段') || '';
+                const description = formData.get('項目說明') || '';
+                const execution = formData.get('執行說明') || '';
+
+                // 檢查是否有填寫「項目說明」或「執行說明」
+                if (description.trim() !== '' || execution.trim() !== '') {
+                    hasContent = true;
+                    let slide = pptx.addSlide();
+
+                    // 標題: 參、 (階段填入)
+                    slide.addText(`參、 ${phase}`, { 
+                        x: 0.5, y: 0.4, w: '90%', h: 0.6, 
+                        fontSize: 28, bold: true, color: '000000', fontFace: 'Arial' 
+                    });
+
+                    // 副標題: (商品名稱填入)
+                    slide.addText(itemName, { 
+                        x: 0.5, y: 1.1, w: '90%', h: 0.5, 
+                        fontSize: 24, bold: true, color: '009688', fontFace: 'Arial' // Teal color
+                    });
+
+                    // 內容區塊: 說明
+                    let contentText = "說明：\n";
+                    if (description) contentText += `${description}\n`;
+                    if (execution) contentText += `${execution}`;
+
+                    // 使用文字框顯示內容
+                    slide.addShape(pptx.shapes.RECTANGLE, { 
+                        x: 0.5, y: 1.8, w: 9, h: 3.5, 
+                        fill: 'FFFFFF', line: { color: 'AAAAAA', width: 1, dashType: 'solid' } 
+                    });
+
+                    slide.addText(contentText, { 
+                        x: 0.6, y: 1.9, w: 8.8, h: 3.3, 
+                        fontSize: 18, color: '333333', valign: 'top', fontFace: 'Arial' 
+                    });
+                }
+            });
+
+            if (!hasContent) {
+                alert("目前沒有任何表單填寫了「項目說明」或「執行說明」，因此未生成內容投影片。");
+            }
+
+            // 下載檔案
+            pptx.writeFile({ fileName: `製管會報告_${meetingDate.replace(/\//g, '')}.pptx` });
         }
 
-        function closeMobileTOC() {
-            const drawer = document.getElementById('mobile-toc-drawer');
-            const backdrop = document.getElementById('mobile-toc-backdrop');
-            if (!drawer || !backdrop) return;
 
-            drawer.classList.add('-translate-x-full');
-            backdrop.classList.add('hidden');
-            document.body.classList.remove('overflow-hidden');
-        }
-
-        // ==========================================================
-        // 【TOC 相關功能】
-        // ==========================================================
-        function cleanItemName(name) {
-            return name.replace(/[\(（].*?[\)）]/g, '').trim();
-        }
-
+        // ... (其他既有函數保持不變) ...
+        function openMobileTOC() { /* ... */ const drawer = document.getElementById('mobile-toc-drawer'); const backdrop = document.getElementById('mobile-toc-backdrop'); if (!drawer || !backdrop) return; backdrop.classList.remove('hidden'); drawer.classList.remove('-translate-x-full'); document.body.classList.add('overflow-hidden'); }
+        function closeMobileTOC() { /* ... */ const drawer = document.getElementById('mobile-toc-drawer'); const backdrop = document.getElementById('mobile-toc-backdrop'); if (!drawer || !backdrop) return; drawer.classList.add('-translate-x-full'); backdrop.classList.add('hidden'); document.body.classList.remove('overflow-hidden'); }
+        function cleanItemName(name) { return name.replace(/[\(（].*?[\)）]/g, '').trim(); }
         function renderTOCInto(containerEl, forms) {
             if (!containerEl) return;
             containerEl.innerHTML = '';
-
-            if (forms.length === 0) {
-                containerEl.innerHTML = '<p class="text-sm text-gray-400">尚無項目可供追蹤。</p>';
-                return;
-            }
-
+            if (forms.length === 0) { containerEl.innerHTML = '<p class="text-sm text-gray-400">尚無項目可供追蹤。</p>'; return; }
             forms.forEach((form, index) => {
                 const suffix = form.id.split('-').pop();
                 const itemInput = form.querySelector(`#item_name-${suffix}`);
                 const rawItemName = itemInput ? itemInput.value : '';
                 const cleanedName = cleanItemName(rawItemName) || `(項目 #${index + 1}: 待填寫)`;
                 const targetId = form.id;
-
                 const link = document.createElement('a');
                 link.href = `#${targetId}`;
                 link.textContent = cleanedName;
                 link.className = 'block cursor-pointer p-2 text-sm font-medium text-gray-600 rounded-lg hover:bg-teal-50 hover:text-teal-700 transition duration-150 truncate';
                 link.title = rawItemName;
-
                 link.addEventListener('click', (e) => {
                     e.preventDefault();
                     const targetElement = document.getElementById(targetId);
-                    if (targetElement) {
-                        targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    }
-                    // 手機點目錄後自動收起，避免遮住表單
+                    if (targetElement) { targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
                     closeMobileTOC();
                 });
-
                 containerEl.appendChild(link);
             });
         }
-
-        function updateTOC() {
-            const forms = Array.from(document.querySelectorAll('.tracking-form-instance'));
-
-            const desktopContainer = document.getElementById('toc-container-desktop');
-            const mobileContainer = document.getElementById('toc-container-mobile');
-
-            renderTOCInto(desktopContainer, forms);
-            renderTOCInto(mobileContainer, forms);
-        }
-
-        // ==========================================================
-        // 【表單連動、移除及初始化】
-        // ==========================================================
-        function updateDetailedType(formElement, index) {
-            const issueTypeSelect = formElement.querySelector(`#issue_type-${index}`);
-            if (!issueTypeSelect) return;
-
-            const detailedTypeContainer = formElement.querySelector(`#detailed-type-container-${index}`);
-            const detailedTypeSelect = formElement.querySelector(`#detailed_type-${index}`);
-
-            const selectedType = issueTypeSelect.value;
-            const requiredDisplay = (selectedType in detailedOptionsMap && detailedOptionsMap[selectedType].length > 0);
-
-            if (requiredDisplay) {
-                detailedTypeContainer.classList.remove('hidden-collapse');
-                detailedTypeSelect.required = false;
-                populateSelect(detailedTypeSelect, detailedOptionsMap[selectedType], "(請選擇詳細類型)");
-            } else {
-                detailedTypeContainer.classList.add('hidden-collapse');
-                detailedTypeSelect.required = false;
-                detailedTypeSelect.value = '';
-            }
-        }
-
-        function updateConditionalFields(formElement, index) {
-            const issueTypeSelect = formElement.querySelector(`#issue_type-${index}`);
-            if (!issueTypeSelect) return;
-
-            const selectedType = issueTypeSelect.value;
-            const isException = selectedType === '異常';
-            const isOptimizationProposal = selectedType === '優化提案';
-
-            const respFactoryContainer = formElement.querySelector(`#responsible-factory-container-${index}`);
-            const respPartyContainer = formElement.querySelector(`#responsible-party-container-${index}`);
-            const respFactorySelect = formElement.querySelector(`#responsible_factory-${index}`);
-            const respPartySelect = formElement.querySelector(`#responsible_party-${index}`);
-
-            if (isException) {
-                respFactoryContainer.classList.remove('hidden-collapse');
-                respPartyContainer.classList.remove('hidden-collapse');
-                respFactorySelect.required = false;
-                respPartySelect.required = false;
-            } else {
-                respFactoryContainer.classList.add('hidden-collapse');
-                respPartyContainer.classList.add('hidden-collapse');
-                respFactorySelect.required = false;
-                respPartySelect.required = false;
-                respFactorySelect.value = '';
-                respPartySelect.value = '';
-            }
-
-            const nonAdoptionContainer = formElement.querySelector(`#non-adoption-container-${index}`);
-            const nonAdoptionTextarea = formElement.querySelector(`#reason_for_non_adoption-${index}`);
-
-            if (isOptimizationProposal) {
-                nonAdoptionContainer.classList.remove('hidden-collapse');
-                nonAdoptionTextarea.required = false;
-            } else {
-                nonAdoptionContainer.classList.add('hidden-collapse');
-                nonAdoptionTextarea.required = false;
-                nonAdoptionTextarea.value = '';
-            }
-        }
-
-        function reIndexForms() {
-            const forms = document.querySelectorAll('.tracking-form-instance');
-            forms.forEach((form, newIndex) => {
-                const titleElement = form.querySelector('.form-title');
-                if (titleElement) {
-                    titleElement.textContent = `試產資訊 #${newIndex + 1}`;
-                }
-            });
-        }
-
-        function removeFormInstance(formElement) {
-            formElement.remove();
-            if (document.querySelectorAll('.tracking-form-instance').length === 0) {
-                cloneAndInitializeForm();
-            }
-            reIndexForms();
-            updateTOC();
-        }
-
+        function updateTOC() { const forms = Array.from(document.querySelectorAll('.tracking-form-instance')); renderTOCInto(document.getElementById('toc-container-desktop'), forms); renderTOCInto(document.getElementById('toc-container-mobile'), forms); }
+        function updateDetailedType(formElement, index) { /* ... */ const issueTypeSelect = formElement.querySelector(`#issue_type-${index}`); if (!issueTypeSelect) return; const detailedTypeContainer = formElement.querySelector(`#detailed-type-container-${index}`); const detailedTypeSelect = formElement.querySelector(`#detailed_type-${index}`); const selectedType = issueTypeSelect.value; const requiredDisplay = (selectedType in detailedOptionsMap && detailedOptionsMap[selectedType].length > 0); if (requiredDisplay) { detailedTypeContainer.classList.remove('hidden-collapse'); detailedTypeSelect.required = false; populateSelect(detailedTypeSelect, detailedOptionsMap[selectedType], "(請選擇詳細類型)"); } else { detailedTypeContainer.classList.add('hidden-collapse'); detailedTypeSelect.required = false; detailedTypeSelect.value = ''; } }
+        function updateConditionalFields(formElement, index) { /* ... */ const issueTypeSelect = formElement.querySelector(`#issue_type-${index}`); if (!issueTypeSelect) return; const selectedType = issueTypeSelect.value; const isException = selectedType === '異常'; const isOptimizationProposal = selectedType === '優化提案'; const respFactoryContainer = formElement.querySelector(`#responsible-factory-container-${index}`); const respPartyContainer = formElement.querySelector(`#responsible-party-container-${index}`); const respFactorySelect = formElement.querySelector(`#responsible_factory-${index}`); const respPartySelect = formElement.querySelector(`#responsible_party-${index}`); if (isException) { respFactoryContainer.classList.remove('hidden-collapse'); respPartyContainer.classList.remove('hidden-collapse'); respFactorySelect.required = false; respPartySelect.required = false; } else { respFactoryContainer.classList.add('hidden-collapse'); respPartyContainer.classList.add('hidden-collapse'); respFactorySelect.required = false; respPartySelect.required = false; respFactorySelect.value = ''; respPartySelect.value = ''; } const nonAdoptionContainer = formElement.querySelector(`#non-adoption-container-${index}`); const nonAdoptionTextarea = formElement.querySelector(`#reason_for_non_adoption-${index}`); if (isOptimizationProposal) { nonAdoptionContainer.classList.remove('hidden-collapse'); nonAdoptionTextarea.required = false; } else { nonAdoptionContainer.classList.add('hidden-collapse'); nonAdoptionTextarea.required = false; nonAdoptionTextarea.value = ''; } }
+        function reIndexForms() { const forms = document.querySelectorAll('.tracking-form-instance'); forms.forEach((form, newIndex) => { const titleElement = form.querySelector('.form-title'); if (titleElement) { titleElement.textContent = `試產資訊 #${newIndex + 1}`; } }); }
+        function removeFormInstance(formElement) { formElement.remove(); if (document.querySelectorAll('.tracking-form-instance').length === 0) { cloneAndInitializeForm(); } reIndexForms(); updateTOC(); }
         function initializeFormInstance(formElement, index, dataToPreFill = {}) {
             formElement.id = `tracking-form-instance-${index}`;
-
             const titleElement = formElement.querySelector('.form-title');
-            if (titleElement) {
-                titleElement.textContent = `試產資訊 #${document.querySelectorAll('.tracking-form-instance').length}`;
-            }
-
+            if (titleElement) titleElement.textContent = `試產資訊 #${document.querySelectorAll('.tracking-form-instance').length}`;
             const suffix = `-${index}`;
             formElement.querySelectorAll('[id], [for]').forEach(el => {
-                if (el.id && !el.id.endsWith(suffix)) {
-                    el.id += suffix;
-                }
-                if (el.hasAttribute('for') && !el.getAttribute('for').endsWith(suffix)) {
-                    el.setAttribute('for', el.getAttribute('for') + suffix);
-                }
+                if (el.id && !el.id.endsWith(suffix)) el.id += suffix;
+                if (el.hasAttribute('for') && !el.getAttribute('for').endsWith(suffix)) el.setAttribute('for', el.getAttribute('for') + suffix);
             });
-
             const selectMap = {
                 'category': { options: dropdownOptions['品類'], default: "(請選擇)" },
                 'phase': { options: dropdownOptions['階段'], default: "(請選擇)" },
@@ -600,100 +484,45 @@
                 'responsible_factory': { options: dropdownOptions['工廠列表'], default: "(無)" },
                 'responsible_party': { options: dropdownOptions['責任端'], default: "(無)" }
             };
-
             Object.keys(selectMap).forEach(baseId => {
                 const selectEl = formElement.querySelector(`#${baseId}${suffix}`);
-                if (selectEl) {
-                    populateSelect(selectEl, selectMap[baseId].options, selectMap[baseId].default);
-                }
+                if (selectEl) populateSelect(selectEl, selectMap[baseId].options, selectMap[baseId].default);
             });
-
-            // 應用預填資料
-            // 這裡的 key 必須對應到 input/select 的 base id，而不是 name 屬性
             if (dataToPreFill && Object.keys(dataToPreFill).length > 0) {
-                const fields = {
-                    'item_name': dataToPreFill.item_name,
-                    'meeting_date': dataToPreFill.meeting_date,
-                    'launch_date': dataToPreFill.launch_date,
-                    'category': dataToPreFill.category,
-                    'phase': dataToPreFill.phase,
-                    'main_factory': dataToPreFill.main_factory,
-                    'sub_factory': dataToPreFill.sub_factory || '', // 確保有預設值
-                };
-
+                const fields = { 'item_name': dataToPreFill.item_name, 'meeting_date': dataToPreFill.meeting_date, 'launch_date': dataToPreFill.launch_date, 'category': dataToPreFill.category, 'phase': dataToPreFill.phase, 'main_factory': dataToPreFill.main_factory, 'sub_factory': dataToPreFill.sub_factory || '' };
                 for (const [key, value] of Object.entries(fields)) {
-                    if (value) {
-                        const input = formElement.querySelector(`#${key}${suffix}`);
-                        if (input) input.value = value;
-                    }
+                    if (value) { const input = formElement.querySelector(`#${key}${suffix}`); if (input) input.value = value; }
                 }
             }
-
-
-            // 綁定連動
             const issueTypeSelect = formElement.querySelector(`#issue_type${suffix}`);
             if (issueTypeSelect) {
-                // 初始化時執行一次連動更新，以處理可能預設選中的值（儘管此處預設為空）
-                updateDetailedType(formElement, index);
-                updateConditionalFields(formElement, index);
-                issueTypeSelect.addEventListener('change', () => {
-                    updateDetailedType(formElement, index);
-                    updateConditionalFields(formElement, index);
-                });
+                updateDetailedType(formElement, index); updateConditionalFields(formElement, index);
+                issueTypeSelect.addEventListener('change', () => { updateDetailedType(formElement, index); updateConditionalFields(formElement, index); });
             }
-
-            // 綁定商品名稱輸入，用於即時更新目錄
             const itemNameInput = formElement.querySelector(`#item_name${suffix}`);
-            if (itemNameInput) {
-                itemNameInput.addEventListener('input', updateTOC);
-            }
-
-            // 綁定移除按鈕
+            if (itemNameInput) itemNameInput.addEventListener('input', updateTOC);
             const removeBtn = formElement.querySelector('.remove-form-btn');
-            if (removeBtn) {
-                removeBtn.addEventListener('click', () => {
-                    removeFormInstance(formElement);
-                });
-            }
-
-            // 綁定本地新增按鈕
+            if (removeBtn) removeBtn.addEventListener('click', () => { removeFormInstance(formElement); });
             const addLocalBtn = formElement.querySelector('.add-form-btn-local');
-            if (addLocalBtn) {
-                addLocalBtn.addEventListener('click', () => {
-                    cloneAndInitializeForm();
-                    updateTOC();
-                });
-            }
+            if (addLocalBtn) addLocalBtn.addEventListener('click', () => { cloneAndInitializeForm(); updateTOC(); });
         }
-
         function cloneAndInitializeForm(dataToPreFill) {
             const templateForm = document.getElementById('form-template');
             const formsWrapper = document.getElementById('forms-wrapper');
-
             const newForm = templateForm.cloneNode(true);
             newForm.classList.remove('form-template');
             newForm.classList.add('tracking-form-instance');
-
             const currentForms = document.querySelectorAll('.tracking-form-instance');
             formsWrapper.appendChild(newForm);
-
             const uniqueIndex = formIndex++;
             initializeFormInstance(newForm, uniqueIndex, dataToPreFill);
-
-            // 如果不是大量預載入期間（即手動新增時），滾動到新表單
-            if (!dataToPreFill && currentForms.length > 0) {
-                newForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
-
+            if (!dataToPreFill && currentForms.length > 0) newForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
             reIndexForms();
         }
-
-        // 轉 CSV
         function convertToCSV(data) {
             if (data.length === 0) return '';
             const headerArray = outputHeaders.map(h => h.outputName);
             const csvHeader = headerArray.map(key => `"${key.replace(/"/g, '""')}"`).join(',');
-
             const csvRows = data.map(row => {
                 return headerArray.map(header => {
                     let value = row[header] === undefined ? '' : String(row[header]);
@@ -701,15 +530,12 @@
                     return `"${value}"`;
                 }).join(',');
             }).join('\n');
-
             return csvHeader + '\n' + csvRows;
         }
-
         function downloadCSV(csvString, filename) {
             const BOM = '\uFEFF';
             const blob = new Blob([BOM + csvString], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement("a");
-
             if (link.download !== undefined) {
                 const url = URL.createObjectURL(blob);
                 link.setAttribute("href", url);
@@ -720,99 +546,65 @@
                 document.body.removeChild(link);
             }
         }
-
         function handleSubmission() {
             const forms = document.querySelectorAll('.tracking-form-instance');
             const allFormData = [];
-
             if (forms.length === 0) {
                 const outputSection = document.getElementById('output-section');
                 outputSection.classList.add('hidden');
                 downloadCSV(convertToCSV([]), `製管會項目數據_${new Date().toISOString().slice(0, 10).replace(/-/g, '')}.csv`);
                 return;
             }
-
             forms.forEach((form) => {
                 const data = {};
                 const formData = new FormData(form);
                 const issueType = formData.get('類型');
-
                 outputHeaders.forEach(header => {
                     const formName = header.formName;
                     const outputName = header.outputName;
                     let value = "";
-
                     if (header.type === 'month_derived') {
                         const dateValue = formData.get('會議日期');
-                        // 確保日期格式正確且不為空
                         if (dateValue && dateValue.match(/^\d{4}-\d{2}-\d{2}$/)) {
-                            // 修正：Date() 解析 'YYYY-MM-DD' 格式會導致時區問題，需修正為 UTC 確保月份正確
                             const parts = dateValue.split('-');
                             const dateObj = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2]));
-                            value = dateObj.getUTCMonth() + 1; // getUTCMonth() 返回 0-11
-                        } else {
-                            value = "";
-                        }
+                            value = dateObj.getUTCMonth() + 1;
+                        } else { value = ""; }
                     } else {
-                        // 這裡使用 input/select 的 name 屬性來取得值
                         value = formData.get(formName) ? formData.get(formName).trim() : "";
-
-                        if (header.isConditional) {
-                            if (issueType !== header.conditionValue) {
-                                value = "";
-                            }
-                        }
-
-                        if (value === "") {
-                            value = "";
-                        }
+                        if (header.isConditional) { if (issueType !== header.conditionValue) value = ""; }
+                        if (value === "") value = "";
                     }
-
                     data[outputName] = value;
                 });
-
                 allFormData.push(data);
             });
-
             const outputSection = document.getElementById('output-section');
             const formOutput = document.getElementById('form-output');
             const formCountOutput = document.getElementById('form-count-output');
-
             const csvContent = convertToCSV(allFormData);
             const date = new Date().toISOString().slice(0, 10).replace(/-/g, '');
-
             downloadCSV(csvContent, `製管會項目數據_${date}.csv`);
-
             formCountOutput.textContent = allFormData.length;
             formOutput.textContent = csvContent;
-
             outputSection.classList.remove('hidden');
             outputSection.scrollIntoView({ behavior: 'smooth' });
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            // Mobile TOC 事件
             const openBtn = document.getElementById('mobile-toc-open-btn');
             const closeBtn = document.getElementById('mobile-toc-close-btn');
             const backdrop = document.getElementById('mobile-toc-backdrop');
-
             if (openBtn) openBtn.addEventListener('click', openMobileTOC);
             if (closeBtn) closeBtn.addEventListener('click', closeMobileTOC);
             if (backdrop) backdrop.addEventListener('click', closeMobileTOC);
-
-            // 根據預填資料生成表單
-            if (preloadedData && preloadedData.length > 0) {
-                preloadedData.forEach(data => {
-                    cloneAndInitializeForm(data);
-                });
-            } else {
-                // 如果沒有資料，初始化一筆空白的
-                cloneAndInitializeForm();
-            }
-            
+            if (preloadedData && preloadedData.length > 0) { preloadedData.forEach(data => { cloneAndInitializeForm(data); }); } else { cloneAndInitializeForm(); }
             updateTOC();
-
             document.getElementById('submit-all-btn').addEventListener('click', handleSubmission);
+            
+            // 綁定 PPT 下載按鈕事件
+            const pptBtn = document.getElementById('download-ppt-btn');
+            if(pptBtn) pptBtn.addEventListener('click', generatePPT);
         });
     </script>
 </body>
