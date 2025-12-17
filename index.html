@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>製管會項目填寫表單 (已預填)</title>
+    <title>製管會項目填寫表單</title>
     <!-- 引入 Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -329,22 +329,49 @@
             '': [],
         };
 
-        // 預填資料 (根據您提供的表格)
+        // 預填資料 (已根據使用者提供資料更新)
         const preloadedData = [
-            { meeting_date: '2024-12-04', category: '三明治(調理麵包)', item_name: '切達海鮮雙饗三明治(舊檔重開)', phase: '架上品', launch_date: '2024-11-26', main_factory: '屏榮新豐', sub_factory: '' },
-            { meeting_date: '2024-12-04', category: '三明治(調理麵包)', item_name: '檸檬紅茶三明治(限量24萬份)', phase: '架上品', launch_date: '2024-11-26', main_factory: '屏榮新豐', sub_factory: '' },
-            { meeting_date: '2024-12-04', category: '三明治(調理麵包)', item_name: '覆盆莓榛果可可三明治(限量36W)', phase: '試產二', launch_date: '2024-12-10', main_factory: '屏榮新豐', sub_factory: '' },
-            { meeting_date: '2024-12-04', category: '三明治(調理麵包)', item_name: '滿滿起司燻腸洋芋堡', phase: '試產二', launch_date: '2024-12-10', main_factory: '屏榮新豐', sub_factory: '' },
-            { meeting_date: '2024-12-04', category: '甜點', item_name: '滿滿布丁聖代杯(舊檔重開)', phase: '架上品', launch_date: '2024-11-26', main_factory: '屏榮大溪', sub_factory: '' },
-            { meeting_date: '2024-12-04', category: '甜點', item_name: '草莓厚奶雪餡泡芙', phase: '試產一', launch_date: '2025-01-07', main_factory: '屏榮大溪', sub_factory: '' },
-            { meeting_date: '2024-12-04', category: '甜點', item_name: '棉花糖可可塔', phase: '試產二', launch_date: '2024-12-10', main_factory: '屏榮大溪', sub_factory: '' },
-            { meeting_date: '2024-12-04', category: '沙拉', item_name: '焗烤洋芋沙拉', phase: '試產一', launch_date: '2024-12-24', main_factory: '屏榮新豐', sub_factory: '' },
-            { meeting_date: '2024-12-04', category: '季節調理麵', item_name: '濃厚豚骨拉麵', phase: '架上品', launch_date: '2024-11-26', main_factory: '晉欣', sub_factory: '' },
-            { meeting_date: '2024-12-04', category: '季節調理麵', item_name: '醬油叉燒拉麵(首批12萬份)', phase: '架上品', launch_date: '2024-11-26', main_factory: '屏榮大溪', sub_factory: '晉欣' },
-            { meeting_date: '2024-12-04', category: '季節調理麵', item_name: '柚子雞白湯拉麵(首批8萬份)', phase: '架上品', launch_date: '2024-12-03', main_factory: '屏榮新豐', sub_factory: '晉欣' },
-            { meeting_date: '2024-12-04', category: '季節調理麵', item_name: '和風匠製胡麻冷麵', phase: '架上品', launch_date: '2024-11-26', main_factory: '屏榮大溪', sub_factory: '' },
-            { meeting_date: '2024-12-04', category: '小吃', item_name: '蛤蜊燉雞腿湯', phase: '試產二', launch_date: '2024-12-10', main_factory: '連合發', sub_factory: '' },
-            { meeting_date: '2024-12-04', category: '小吃', item_name: '香菇油飯', phase: '試產二', launch_date: '2024-12-10', main_factory: '連合發', sub_factory: '' }
+            // 12月18日	12月	三明治(調理麵包)	覆盆莓榛果可可三明治(限量36W)	架上品	12月10日	屏榮新豐
+            { meeting_date: '2025-12-18', category: '三明治(調理麵包)', item_name: '覆盆莓榛果可可三明治(限量36W)', phase: '架上品', launch_date: '2025-12-10', main_factory: '屏榮新豐' },
+            // 12月18日	12月	三明治(調理麵包)	滿滿起司燻腸洋芋堡	架上品	12月10日	屏榮新豐
+            { meeting_date: '2025-12-18', category: '三明治(調理麵包)', item_name: '滿滿起司燻腸洋芋堡', phase: '架上品', launch_date: '2025-12-10', main_factory: '屏榮新豐' },
+            // 12月18日	12月	三明治(調理麵包)	藍莓優格三明治	架上品	12月17日	屏榮新豐
+            { meeting_date: '2025-12-18', category: '三明治(調理麵包)', item_name: '藍莓優格三明治', phase: '架上品', launch_date: '2025-12-17', main_factory: '屏榮新豐' },
+            // 12月18日	12月	三明治(調理麵包)	黃金雙層鱈魚招財堡	試產一	1月21日	屏榮新豐
+            // 假設 '1月21日' 是 '2026-01-21'
+            { meeting_date: '2025-12-18', category: '三明治(調理麵包)', item_name: '黃金雙層鱈魚招財堡', phase: '試產一', launch_date: '2026-01-21', main_factory: '屏榮新豐' },
+            // 12月18日	12月	三明治(調理麵包)	花生培根歐姆蛋堡	試產二	12月24日	屏榮新豐
+            { meeting_date: '2025-12-18', category: '三明治(調理麵包)', item_name: '花生培根歐姆蛋堡', phase: '試產二', launch_date: '2025-12-24', main_factory: '屏榮新豐' },
+            // 12月18日	12月	甜點	棉花糖可可塔	架上品	12月10日	屏榮大溪
+            { meeting_date: '2025-12-18', category: '甜點', item_name: '棉花糖可可塔', phase: '架上品', launch_date: '2025-12-10', main_factory: '屏榮大溪' },
+            // 12月18日	12月	甜點	抹茶生巧起司塔	試產一	3月4日	屏榮大溪
+            // 假設 '3月4日' 是 '2026-03-04'
+            { meeting_date: '2025-12-18', category: '甜點', item_name: '抹茶生巧起司塔', phase: '試產一', launch_date: '2026-03-04', main_factory: '屏榮大溪' },
+            // 12月18日	12月	甜點	抹茶蒙布朗布丁	試產一	3月11日	屏榮大溪
+            // 假設 '3月11日' 是 '2026-03-11'
+            { meeting_date: '2025-12-18', category: '甜點', item_name: '抹茶蒙布朗布丁', phase: '試產一', launch_date: '2026-03-11', main_factory: '屏榮大溪' },
+            // 12月18日	12月	甜點	生巧風味餅乾夾心	試產二	12月24日	屏榮大溪
+            { meeting_date: '2025-12-18', category: '甜點', item_name: '生巧風味餅乾夾心', phase: '試產二', launch_date: '2025-12-24', main_factory: '屏榮大溪' },
+            // 12月18日	12月	沙拉	溏心蛋洋芋沙拉	架上品	12月17日	屏榮新豐
+            { meeting_date: '2025-12-18', category: '沙拉', item_name: '溏心蛋洋芋沙拉', phase: '架上品', launch_date: '2025-12-17', main_factory: '屏榮新豐' },
+            // 12月18日	12月	沙拉	玉美墨西哥風若醬起司嫩蛋捲	試產二	12月17日	玉美
+            { meeting_date: '2025-12-18', category: '沙拉', item_name: '玉美墨西哥風若醬起司嫩蛋捲', phase: '試產二', launch_date: '2025-12-17', main_factory: '玉美' },
+            // 12月18日	12月	沙拉	洋芋沙拉	試產一	12月24日	玉美
+            { meeting_date: '2025-12-18', category: '沙拉', item_name: '洋芋沙拉', phase: '試產一', launch_date: '2025-12-24', main_factory: '玉美' },
+            // 12月18日	12月	季節調理麵	鴻運番茄湯麵	試產一	1月21日	屏榮大溪
+            // 假設 '1月21日' 是 '2026-01-21'
+            { meeting_date: '2025-12-18', category: '季節調理麵', item_name: '鴻運番茄湯麵', phase: '試產一', launch_date: '2026-01-21', main_factory: '屏榮大溪' },
+            // 12月18日	12月	小吃	蛤蜊燉雞腿湯	架上品	12月10日	連合發
+            { meeting_date: '2025-12-18', category: '小吃', item_name: '蛤蜊燉雞腿湯', phase: '架上品', launch_date: '2025-12-10', main_factory: '連合發' },
+            // 12月18日	12月	小吃	香菇油飯	架上品	12月10日	連合發
+            { meeting_date: '2025-12-18', category: '小吃', item_name: '香菇油飯', phase: '架上品', launch_date: '2025-12-10', main_factory: '連合發' },
+            // 12月18日	12月	小吃	阿甘剝皮辣椒蒸蛋	架上品	12月17日	連合發
+            { meeting_date: '2025-12-18', category: '小吃', item_name: '阿甘剝皮辣椒蒸蛋', phase: '架上品', launch_date: '2025-12-17', main_factory: '連合發' },
+            // 12月18日	12月	小吃	三杯菇菇米血	試產一	1月21日	長家
+            // 假設 '1月21日' 是 '2026-01-21'
+            { meeting_date: '2025-12-18', category: '小吃', item_name: '三杯菇菇米血', phase: '試產一', launch_date: '2026-01-21', main_factory: '長家' },
+            // 12月18日	12月	小吃	川味麻辣鍋	試產二	12月24日	連合發
+            { meeting_date: '2025-12-18', category: '小吃', item_name: '川味麻辣鍋', phase: '試產二', launch_date: '2025-12-24', main_factory: '連合發' }
         ];
 
         // 【重要更新】定義所有 Excel 輸出的欄位順序、標題名稱和對應的 Form Field Name
@@ -582,6 +609,7 @@
             });
 
             // 應用預填資料
+            // 這裡的 key 必須對應到 input/select 的 base id，而不是 name 屬性
             if (dataToPreFill && Object.keys(dataToPreFill).length > 0) {
                 const fields = {
                     'item_name': dataToPreFill.item_name,
@@ -590,7 +618,7 @@
                     'category': dataToPreFill.category,
                     'phase': dataToPreFill.phase,
                     'main_factory': dataToPreFill.main_factory,
-                    'sub_factory': dataToPreFill.sub_factory
+                    'sub_factory': dataToPreFill.sub_factory || '', // 確保有預設值
                 };
 
                 for (const [key, value] of Object.entries(fields)) {
@@ -601,9 +629,11 @@
                 }
             }
 
+
             // 綁定連動
             const issueTypeSelect = formElement.querySelector(`#issue_type${suffix}`);
             if (issueTypeSelect) {
+                // 初始化時執行一次連動更新，以處理可能預設選中的值（儘管此處預設為空）
                 updateDetailedType(formElement, index);
                 updateConditionalFields(formElement, index);
                 issueTypeSelect.addEventListener('change', () => {
@@ -714,12 +744,17 @@
 
                     if (header.type === 'month_derived') {
                         const dateValue = formData.get('會議日期');
-                        if (dateValue) {
-                            value = new Date(dateValue).getMonth() + 1;
+                        // 確保日期格式正確且不為空
+                        if (dateValue && dateValue.match(/^\d{4}-\d{2}-\d{2}$/)) {
+                            // 修正：Date() 解析 'YYYY-MM-DD' 格式會導致時區問題，需修正為 UTC 確保月份正確
+                            const parts = dateValue.split('-');
+                            const dateObj = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2]));
+                            value = dateObj.getUTCMonth() + 1; // getUTCMonth() 返回 0-11
                         } else {
                             value = "";
                         }
                     } else {
+                        // 這裡使用 input/select 的 name 屬性來取得值
                         value = formData.get(formName) ? formData.get(formName).trim() : "";
 
                         if (header.isConditional) {
