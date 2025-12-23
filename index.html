@@ -251,6 +251,21 @@
                         placeholder="請填寫後續處理方式、修正作法、試產調整方向。"
                         class="form-input h-36 md:h-40 resize-y focus:ring-teal-500 focus:border-teal-500"></textarea>
                 </div>
+
+                <!-- NEW: 照片上傳（手機可拍照/選圖；將會帶入PPT內容頁） -->
+                <div>
+                    <label for="issue_photo" class="block text-sm font-semibold text-gray-700 mb-1">照片上傳（異常/優化佐證）</label>
+                    <input type="file" id="issue_photo" name="照片檔" accept="image/*" capture="environment"
+                        class="form-input bg-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-teal-50 file:text-teal-700 hover:file:bg-teal-100" />
+                    <input type="hidden" id="issue_photo_data" name="照片資料" value="" />
+                    <div class="mt-3">
+                        <div class="text-xs text-gray-500 mb-2">建議：拍攝/上傳後會自動壓縮（加速PPT生成、避免檔案過大）。</div>
+                        <div class="w-full border border-gray-200 rounded-xl bg-white p-3">
+                            <img id="issue_photo_preview" alt="照片預覽" class="hidden w-full max-h-64 object-contain rounded-lg" />
+                            <div id="issue_photo_empty" class="text-sm text-gray-400">尚未上傳照片</div>
+                        </div>
+                    </div>
+                </div>
                 <div>
                     <label for="remarks" class="block text-sm font-semibold text-gray-700 mb-1">備註</label>
                     <textarea id="remarks" name="備註" rows="5"
@@ -339,6 +354,80 @@
             });
         }
 
+        // --- Image Upload & Compression (store as DataURL for PPT) ---
+        async function downscaleToJpegDataUrl(file, maxSide = 1280, quality = 0.82) {
+            const readAsDataURL = (f) => new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(String(reader.result || ''));
+                reader.onerror = reject;
+                reader.readAsDataURL(f);
+            });
+
+            const srcDataUrl = await readAsDataURL(file);
+
+            try {
+                const img = new Image();
+                img.decoding = 'async';
+                img.src = srcDataUrl;
+                await new Promise((res, rej) => {
+                    img.onload = () => res();
+                    img.onerror = rej;
+                });
+
+                const w = img.naturalWidth || img.width;
+                const h = img.naturalHeight || img.height;
+                if (!w || !h) return srcDataUrl;
+
+                const scale = Math.min(1, maxSide / Math.max(w, h));
+                const targetW = Math.max(1, Math.round(w * scale));
+                const targetH = Math.max(1, Math.round(h * scale));
+
+                const canvas = document.createElement('canvas');
+                canvas.width = targetW;
+                canvas.height = targetH;
+                const ctx = canvas.getContext('2d');
+                if (!ctx) return srcDataUrl;
+
+                ctx.drawImage(img, 0, 0, targetW, targetH);
+                const out = canvas.toDataURL('image/jpeg', quality);
+                return out || srcDataUrl;
+            } catch (e) {
+                return srcDataUrl;
+            }
+        }
+
+        async function handleIssuePhotoChange(formElement, index) {
+            const suffix = `-${index}`;
+            const fileInput = formElement.querySelector(`#issue_photo${suffix}`);
+            const hiddenInput = formElement.querySelector(`#issue_photo_data${suffix}`);
+            const previewImg = formElement.querySelector(`#issue_photo_preview${suffix}`);
+            const emptyHint = formElement.querySelector(`#issue_photo_empty${suffix}`);
+
+            if (!fileInput || !hiddenInput || !previewImg || !emptyHint) return;
+            const file = fileInput.files && fileInput.files[0];
+
+            if (!file) {
+                hiddenInput.value = '';
+                previewImg.src = '';
+                previewImg.classList.add('hidden');
+                emptyHint.classList.remove('hidden');
+                return;
+            }
+
+            if (!file.type || !file.type.startsWith('image/')) {
+                alert('請上傳圖片檔（image/*）。');
+                fileInput.value = '';
+                return;
+            }
+
+            const dataUrl = await downscaleToJpegDataUrl(file, 1280, 0.82);
+            hiddenInput.value = dataUrl;
+
+            previewImg.src = dataUrl;
+            previewImg.classList.remove('hidden');
+            emptyHint.classList.add('hidden');
+        }
+
         // --- PPT Generation Logic ---
         function generatePPT() {
             let pptx = new PptxGenJS();
@@ -369,7 +458,7 @@
             slide1.addText("製管會議", { x: 0.8, y: 2.4, fontSize: 20, bold: true, color: '000000' });
 
             slide1.addText("會議日期", { x: 0.8, y: 3.2, fontSize: 14, color: '666666' });
-            slide1.addText(meetingDate, { x: 0.8, y: 3.6, fontSize: 20, bold: true, color: 'E91E63' }); // 強調日期
+            slide1.addText(meetingDate, { x: 0.8, y: 3.6, fontSize: 20, bold: true, color: 'E91E63' });
 
             // 右側資訊 (報告人、機密等級等)
             let rightX = 6;
@@ -380,7 +469,7 @@
 
             // --- 頁面 2: 大綱 (Agenda) ---
             let slide2 = pptx.addSlide();
-            slide2.addText("大綱", { x: 0.5, y: 0.5, fontSize: 28, bold: true, color: '004D40' }); // Teal-900 like
+            slide2.addText("大綱", { x: 0.5, y: 0.5, fontSize: 28, bold: true, color: '004D40' });
             
             // 表格資料
             let rows = [
@@ -409,38 +498,66 @@
                 const phase = formData.get('階段') || '';
                 const description = formData.get('項目說明') || '';
                 const execution = formData.get('執行說明') || '';
+                const issuePhotoData = formData.get('照片資料') || '';
 
-                // 檢查是否有填寫「項目說明」或「執行說明」
+                // 只要「項目說明」或「執行說明」有內容就產生投影片
                 if (description.trim() !== '' || execution.trim() !== '') {
                     hasContent = true;
-                    let slide = pptx.addSlide();
+                    const slide = pptx.addSlide();
 
-                    // 標題: 參、 (階段填入)
+                    // ====== 版面：依你提供的樣式（上：標題／中：照片大框／下：說明框） ======
+                    // 標題：參、 階段
                     slide.addText(`參、 ${phase}`, {
-                        x: 0.5, y: 0.4, w: '90%', h: 0.6,
-                        fontSize: 28, bold: true, color: '000000', fontFace: 'Arial'
+                        x: 0.5, y: 0.35, w: 9.5, h: 0.6,
+                        fontSize: 36, bold: true, color: '000000', fontFace: 'Arial'
                     });
 
-                    // 副標題: (商品名稱填入)
-                    slide.addText(itemName, {
-                        x: 0.5, y: 1.1, w: '90%', h: 0.5,
-                        fontSize: 24, bold: true, color: '009688', fontFace: 'Arial' // Teal color
+                    // （若你仍想保留商品名稱，可把這段打開）
+                    // slide.addText(itemName, {
+                    //     x: 0.5, y: 0.95, w: 9.5, h: 0.4,
+                    //     fontSize: 18, bold: true, color: '333333', fontFace: 'Arial'
+                    // });
+
+                    // 照片區（大框）
+                    // 位置與尺寸：16:9(10"x5.625")，留出標題高度後，照片框佔主要區域
+                    const photoBox = { x: 0.5, y: 1.05, w: 9.5, h: 3.25 };
+                    slide.addText('照片(上傳的圖片)', {
+                        x: photoBox.x, y: photoBox.y - 0.28, w: photoBox.w, h: 0.25,
+                        fontSize: 16, color: '000000', fontFace: 'Arial'
+                    });
+                    slide.addShape(pptx.shapes.RECTANGLE, {
+                        x: photoBox.x, y: photoBox.y, w: photoBox.w, h: photoBox.h,
+                        fill: 'FFFFFF', line: { color: '7F7F7F', width: 1 }
                     });
 
-                    // 內容區塊: 說明
-                    let contentText = "說明：\n";
+                    const hasPhoto = (issuePhotoData && typeof issuePhotoData === 'string' && issuePhotoData.startsWith('data:image/'));
+                    if (hasPhoto) {
+                        // 以「contain」方式放入，避免裁切
+                        slide.addImage({
+                            data: issuePhotoData,
+                            x: photoBox.x + 0.05,
+                            y: photoBox.y + 0.05,
+                            w: photoBox.w - 0.10,
+                            h: photoBox.h - 0.10,
+                            sizing: { type: 'contain' }
+                        });
+                    }
+
+                    // 說明區（下方小框）
+                    const descBox = { x: 0.5, y: 4.45, w: 9.5, h: 1.05 };
+                    slide.addShape(pptx.shapes.RECTANGLE, {
+                        x: descBox.x, y: descBox.y, w: descBox.w, h: descBox.h,
+                        fill: 'FFFFFF', line: { color: '7F7F7F', width: 1 }
+                    });
+
+                    let contentText = '說明：\n';
                     if (description) contentText += `${description}\n`;
                     if (execution) contentText += `${execution}`;
 
-                    // 使用文字框顯示內容
-                    slide.addShape(pptx.shapes.RECTANGLE, {
-                        x: 0.5, y: 1.8, w: 9, h: 3.5,
-                        fill: 'FFFFFF', line: { color: 'AAAAAA', width: 1, dashType: 'solid' }
-                    });
-
                     slide.addText(contentText, {
-                        x: 0.6, y: 1.9, w: 8.8, h: 3.3,
-                        fontSize: 18, color: '333333', valign: 'top', fontFace: 'Arial'
+                        x: descBox.x + 0.15, y: descBox.y + 0.12,
+                        w: descBox.w - 0.3, h: descBox.h - 0.24,
+                        fontSize: 20, color: '000000', valign: 'top', fontFace: 'Arial'
                     });
                 }
             });
@@ -449,13 +566,11 @@
                 alert("目前沒有任何表單填寫了「項目說明」或「執行說明」，因此未生成內容投影片。");
             }
 
-            // 下載檔案
             pptx.writeFile({ fileName: `製管會報告_${meetingDate.replace(/\//g, '')}.pptx` });
         }
 
-        // ... (其他既有函數保持不變) ...
-        function openMobileTOC() { /* ... */ const drawer = document.getElementById('mobile-toc-drawer'); const backdrop = document.getElementById('mobile-toc-backdrop'); if (!drawer || !backdrop) return; backdrop.classList.remove('hidden'); drawer.classList.remove('-translate-x-full'); document.body.classList.add('overflow-hidden'); }
-        function closeMobileTOC() { /* ... */ const drawer = document.getElementById('mobile-toc-drawer'); const backdrop = document.getElementById('mobile-toc-backdrop'); if (!drawer || !backdrop) return; drawer.classList.add('-translate-x-full'); backdrop.classList.add('hidden'); document.body.classList.remove('overflow-hidden'); }
+        function openMobileTOC() { const drawer = document.getElementById('mobile-toc-drawer'); const backdrop = document.getElementById('mobile-toc-backdrop'); if (!drawer || !backdrop) return; backdrop.classList.remove('hidden'); drawer.classList.remove('-translate-x-full'); document.body.classList.add('overflow-hidden'); }
+        function closeMobileTOC() { const drawer = document.getElementById('mobile-toc-drawer'); const backdrop = document.getElementById('mobile-toc-backdrop'); if (!drawer || !backdrop) return; drawer.classList.add('-translate-x-full'); backdrop.classList.add('hidden'); document.body.classList.remove('overflow-hidden'); }
         function cleanItemName(name) { return name.replace(/[\(（].*?[\)）]/g, '').trim(); }
         function renderTOCInto(containerEl, forms) {
             if (!containerEl) return;
@@ -486,8 +601,8 @@
             renderTOCInto(document.getElementById('toc-container-mobile'), forms);
             updatePagerUI();
         }
-        function updateDetailedType(formElement, index) { /* ... */ const issueTypeSelect = formElement.querySelector(`#issue_type-${index}`); if (!issueTypeSelect) return; const detailedTypeContainer = formElement.querySelector(`#detailed-type-container-${index}`); const detailedTypeSelect = formElement.querySelector(`#detailed_type-${index}`); const selectedType = issueTypeSelect.value; const requiredDisplay = (selectedType in detailedOptionsMap && detailedOptionsMap[selectedType].length > 0); if (requiredDisplay) { detailedTypeContainer.classList.remove('hidden-collapse'); detailedTypeSelect.required = false; populateSelect(detailedTypeSelect, detailedOptionsMap[selectedType], "(請選擇詳細類型)"); } else { detailedTypeContainer.classList.add('hidden-collapse'); detailedTypeSelect.required = false; detailedTypeSelect.value = ''; } }
-        function updateConditionalFields(formElement, index) { /* ... */ const issueTypeSelect = formElement.querySelector(`#issue_type-${index}`); if (!issueTypeSelect) return; const selectedType = issueTypeSelect.value; const isException = selectedType === '異常'; const isOptimizationProposal = selectedType === '優化提案'; const respFactoryContainer = formElement.querySelector(`#responsible-factory-container-${index}`); const respPartyContainer = formElement.querySelector(`#responsible-party-container-${index}`); const respFactorySelect = formElement.querySelector(`#responsible_factory-${index}`); const respPartySelect = formElement.querySelector(`#responsible_party-${index}`); if (isException) { respFactoryContainer.classList.remove('hidden-collapse'); respPartyContainer.classList.remove('hidden-collapse'); respFactorySelect.required = false; respPartySelect.required = false; } else { respFactoryContainer.classList.add('hidden-collapse'); respPartyContainer.classList.add('hidden-collapse'); respFactorySelect.required = false; respPartySelect.required = false; respFactorySelect.value = ''; respPartySelect.value = ''; } const nonAdoptionContainer = formElement.querySelector(`#non-adoption-container-${index}`); const nonAdoptionTextarea = formElement.querySelector(`#reason_for_non_adoption-${index}`); if (isOptimizationProposal) { nonAdoptionContainer.classList.remove('hidden-collapse'); nonAdoptionTextarea.required = false; } else { nonAdoptionContainer.classList.add('hidden-collapse'); nonAdoptionTextarea.required = false; nonAdoptionTextarea.value = ''; } }
+        function updateDetailedType(formElement, index) { const issueTypeSelect = formElement.querySelector(`#issue_type-${index}`); if (!issueTypeSelect) return; const detailedTypeContainer = formElement.querySelector(`#detailed-type-container-${index}`); const detailedTypeSelect = formElement.querySelector(`#detailed_type-${index}`); const selectedType = issueTypeSelect.value; const requiredDisplay = (selectedType in detailedOptionsMap && detailedOptionsMap[selectedType].length > 0); if (requiredDisplay) { detailedTypeContainer.classList.remove('hidden-collapse'); detailedTypeSelect.required = false; populateSelect(detailedTypeSelect, detailedOptionsMap[selectedType], "(請選擇詳細類型)"); } else { detailedTypeContainer.classList.add('hidden-collapse'); detailedTypeSelect.required = false; detailedTypeSelect.value = ''; } }
+        function updateConditionalFields(formElement, index) { const issueTypeSelect = formElement.querySelector(`#issue_type-${index}`); if (!issueTypeSelect) return; const selectedType = issueTypeSelect.value; const isException = selectedType === '異常'; const isOptimizationProposal = selectedType === '優化提案'; const respFactoryContainer = formElement.querySelector(`#responsible-factory-container-${index}`); const respPartyContainer = formElement.querySelector(`#responsible-party-container-${index}`); const respFactorySelect = formElement.querySelector(`#responsible_factory-${index}`); const respPartySelect = formElement.querySelector(`#responsible_party-${index}`); if (isException) { respFactoryContainer.classList.remove('hidden-collapse'); respPartyContainer.classList.remove('hidden-collapse'); respFactorySelect.required = false; respPartySelect.required = false; } else { respFactoryContainer.classList.add('hidden-collapse'); respPartyContainer.classList.add('hidden-collapse'); respFactorySelect.required = false; respPartySelect.required = false; respFactorySelect.value = ''; respPartySelect.value = ''; } const nonAdoptionContainer = formElement.querySelector(`#non-adoption-container-${index}`); const nonAdoptionTextarea = formElement.querySelector(`#reason_for_non_adoption-${index}`); if (isOptimizationProposal) { nonAdoptionContainer.classList.remove('hidden-collapse'); nonAdoptionTextarea.required = false; } else { nonAdoptionContainer.classList.add('hidden-collapse'); nonAdoptionTextarea.required = false; nonAdoptionTextarea.value = ''; } }
         function reIndexForms() { const forms = document.querySelectorAll('.tracking-form-instance'); forms.forEach((form, newIndex) => { const titleElement = form.querySelector('.form-title'); if (titleElement) { titleElement.textContent = `試產資訊 #${newIndex + 1}`; } }); }
         function removeFormInstance(formElement) {
             const wasActive = formElement.classList.contains('is-active');
@@ -502,7 +617,6 @@
                 return;
             }
 
-            // 若移除的是目前顯示的頁面，則切換到相鄰的一頁
             if (wasActive) {
                 const nextCandidate = forms[Math.min(removeIndex, forms.length - 1)] || forms[0];
                 setActiveForm(nextCandidate.id);
@@ -512,7 +626,6 @@
             updateTOC();
         }
         function initializeFormInstance(formElement, index, dataToPreFill = {}) {
-            // 分頁容器 class（保險：若外部沒加到，這裡也補上）
             formElement.classList.add('form-page');
             formElement.id = `tracking-form-instance-${index}`;
             const titleElement = formElement.querySelector('.form-title');
@@ -552,6 +665,11 @@
             if (removeBtn) removeBtn.addEventListener('click', () => { removeFormInstance(formElement); });
             const addLocalBtn = formElement.querySelector('.add-form-btn-local');
             if (addLocalBtn) addLocalBtn.addEventListener('click', () => { cloneAndInitializeForm(); updateTOC(); });
+
+            const photoInput = formElement.querySelector(`#issue_photo${suffix}`);
+            if (photoInput) {
+                photoInput.addEventListener('change', () => { handleIssuePhotoChange(formElement, index); });
+            }
         }
         function cloneAndInitializeForm(dataToPreFill) {
             const templateForm = document.getElementById('form-template');
@@ -567,7 +685,6 @@
             const uniqueIndex = formIndex++;
             initializeFormInstance(newForm, uniqueIndex, dataToPreFill);
 
-            // 新增後切到新頁面（避免無限往下延伸）
             setActiveForm(newForm.id);
 
             if (!dataToPreFill && currentForms.length > 0) {
@@ -664,7 +781,6 @@
 
             updatePagerUI();
 
-            // 切換頁面後回到表單上方（避免使用者迷路）
             const main = document.getElementById('main-container');
             if (main) main.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
@@ -715,24 +831,19 @@
                 cloneAndInitializeForm();
             }
 
-            // 預設顯示第一筆（若 cloneAndInitializeForm 已切到最後一筆，這裡保留最後一筆也可；
-            // 若你想固定顯示第一筆，把註解打開即可。）
             const forms = getFormsArray();
             if (forms.length > 0) {
-                // setActiveForm(forms[0].id);
                 setActiveForm(forms[forms.length - 1].id);
             }
 
             updateTOC();
 
-            // 分頁按鈕
             const prevBtn = document.getElementById('prev-form-btn');
             const nextBtn = document.getElementById('next-form-btn');
             if (prevBtn) prevBtn.addEventListener('click', goPrevForm);
             if (nextBtn) nextBtn.addEventListener('click', goNextForm);
             document.getElementById('submit-all-btn').addEventListener('click', handleSubmission);
             
-            // 綁定 PPT 下載按鈕事件
             const pptBtn = document.getElementById('download-ppt-btn');
             if(pptBtn) pptBtn.addEventListener('click', generatePPT);
         });
