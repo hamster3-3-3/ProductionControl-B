@@ -31,6 +31,14 @@
         .form-template {
             display: none;
         }
+
+        /* 分頁顯示：一次只顯示一筆表單 */
+        .form-page {
+            display: none;
+        }
+        .form-page.is-active {
+            display: block;
+        }
     </style>
     <script>
         tailwind.config = {
@@ -107,6 +115,24 @@
                 <div class="p-6 rounded-t-xl bg-gray-50 border-b border-gray-200">
                     <h1 class="text-3xl font-extrabold text-gray-800">製管會項目</h1>
                     <p class="text-gray-500 mt-1">請填寫試產相關資訊及異常/優化追蹤細節。**所有欄位皆為非必填**</p>
+
+                    <!-- NEW: 分頁導覽（一次顯示一筆表單） -->
+                    <div class="mt-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                        <div class="flex items-center gap-2">
+                            <button type="button" id="prev-form-btn"
+                                class="px-4 py-2 rounded-lg bg-white border border-gray-200 text-gray-700 font-semibold shadow-sm hover:bg-gray-50 focus:ring-4 focus:ring-teal-200 disabled:opacity-40 disabled:cursor-not-allowed">
+                                上一筆
+                            </button>
+                            <button type="button" id="next-form-btn"
+                                class="px-4 py-2 rounded-lg bg-white border border-gray-200 text-gray-700 font-semibold shadow-sm hover:bg-gray-50 focus:ring-4 focus:ring-teal-200 disabled:opacity-40 disabled:cursor-not-allowed">
+                                下一筆
+                            </button>
+                            <span id="pager-indicator" class="ml-2 text-sm text-gray-500">目前：0 / 0</span>
+                        </div>
+                        <div class="text-sm text-gray-500">
+                            透過左側「試產目錄」點擊項目即可直接切換到該筆表單。
+                        </div>
+                    </div>
                 </div>
 
                 <div id="forms-wrapper" class="divide-y divide-gray-200">
@@ -262,24 +288,19 @@
             '新增規範': [], '': []
         };
         const preloadedData = [
-            { meeting_date: '2025-12-18', category: '三明治(調理麵包)', item_name: '覆盆莓榛果可可三明治(限量36W)', phase: '架上品', launch_date: '2025-12-10', main_factory: '屏榮新豐' },
-            { meeting_date: '2025-12-18', category: '三明治(調理麵包)', item_name: '滿滿起司燻腸洋芋堡', phase: '架上品', launch_date: '2025-12-10', main_factory: '屏榮新豐' },
-            { meeting_date: '2025-12-18', category: '三明治(調理麵包)', item_name: '藍莓優格三明治', phase: '架上品', launch_date: '2025-12-17', main_factory: '屏榮新豐' },
-            { meeting_date: '2025-12-18', category: '三明治(調理麵包)', item_name: '黃金雙層鱈魚招財堡', phase: '試產一', launch_date: '2026-01-21', main_factory: '屏榮新豐' },
-            { meeting_date: '2025-12-18', category: '三明治(調理麵包)', item_name: '花生培根歐姆蛋堡', phase: '試產二', launch_date: '2025-12-24', main_factory: '屏榮新豐' },
-            { meeting_date: '2025-12-18', category: '甜點', item_name: '棉花糖可可塔', phase: '架上品', launch_date: '2025-12-10', main_factory: '屏榮大溪' },
-            { meeting_date: '2025-12-18', category: '甜點', item_name: '抹茶生巧起司塔', phase: '試產一', launch_date: '2026-03-04', main_factory: '屏榮大溪' },
-            { meeting_date: '2025-12-18', category: '甜點', item_name: '抹茶蒙布朗布丁', phase: '試產一', launch_date: '2026-03-11', main_factory: '屏榮大溪' },
-            { meeting_date: '2025-12-18', category: '甜點', item_name: '生巧風味餅乾夾心', phase: '試產二', launch_date: '2025-12-24', main_factory: '屏榮大溪' },
-            { meeting_date: '2025-12-18', category: '沙拉', item_name: '溏心蛋洋芋沙拉', phase: '架上品', launch_date: '2025-12-17', main_factory: '屏榮新豐' },
-            { meeting_date: '2025-12-18', category: '沙拉', item_name: '玉美墨西哥風若醬起司嫩蛋捲', phase: '試產二', launch_date: '2025-12-17', main_factory: '玉美' },
-            { meeting_date: '2025-12-18', category: '沙拉', item_name: '洋芋沙拉', phase: '試產一', launch_date: '2025-12-24', main_factory: '玉美' },
-            { meeting_date: '2025-12-18', category: '季節調理麵', item_name: '鴻運番茄湯麵', phase: '試產一', launch_date: '2026-01-21', main_factory: '屏榮大溪' },
-            { meeting_date: '2025-12-18', category: '小吃', item_name: '蛤蜊燉雞腿湯', phase: '架上品', launch_date: '2025-12-10', main_factory: '連合發' },
-            { meeting_date: '2025-12-18', category: '小吃', item_name: '香菇油飯', phase: '架上品', launch_date: '2025-12-10', main_factory: '連合發' },
-            { meeting_date: '2025-12-18', category: '小吃', item_name: '阿甘剝皮辣椒蒸蛋', phase: '架上品', launch_date: '2025-12-17', main_factory: '連合發' },
-            { meeting_date: '2025-12-18', category: '小吃', item_name: '三杯菇菇米血', phase: '試產一', launch_date: '2026-01-21', main_factory: '長家' },
-            { meeting_date: '2025-12-18', category: '小吃', item_name: '川味麻辣鍋', phase: '試產二', launch_date: '2025-12-24', main_factory: '連合發' }
+            { meeting_date: '2025-12-24', category: '三明治(調理麵包)', item_name: '花生培根歐姆蛋堡', phase: '架上品', launch_date: '2025-12-24' },
+            { meeting_date: '2025-12-24', category: '甜點', item_name: '生巧風味餅乾夾心', phase: '架上品', launch_date: '2025-12-24' },
+            { meeting_date: '2025-12-24', category: '沙拉', item_name: '溏心蛋洋芋沙拉', phase: '架上品', launch_date: '2025-12-17' },
+            { meeting_date: '2025-12-24', category: '沙拉', item_name: '玉美墨西哥風若醬起司嫩蛋捲', phase: '架上品', launch_date: '2025-12-17' },
+            { meeting_date: '2025-12-24', category: '沙拉', item_name: '青檸烤雞握沙拉(調整醬汁塗抹方式)', phase: '試產二' },
+            { meeting_date: '2025-12-24', category: '沙拉', item_name: '凱薩沙拉(封膜切換+延長效期)', phase: '試產二' },
+            { meeting_date: '2025-12-24', category: '沙拉', item_name: '元氣滿滿野蔬沙拉(封膜切換+延長效期)', phase: '試產二' },
+
+            /* === 新增品項（2025/12/24 會議） === */
+            { meeting_date: '2025-12-24', category: '沙拉', item_name: '海藻野菜沙拉(沙拉醬包註解修正)', phase: '試產二' },
+            { meeting_date: '2025-12-24', category: '沙拉', item_name: '歐式田園沙拉(沙拉醬包註解修正)', phase: '試產二' },
+            { meeting_date: '2025-12-24', category: '沙拉', item_name: '洋芋沙拉(試產2 確認立袋封膜)', phase: '試產二', launch_date: '2025-12-31' },
+            { meeting_date: '2025-12-24', category: '小吃', item_name: '阿甘剝皮辣椒蒸蛋', phase: '架上品' }
         ];
 
         const outputHeaders = [
@@ -395,14 +416,14 @@
                     let slide = pptx.addSlide();
 
                     // 標題: 參、 (階段填入)
-                    slide.addText(`參、 ${phase}`, { 
-                        x: 0.5, y: 0.4, w: '90%', h: 0.6, 
-                        fontSize: 28, bold: true, color: '000000', fontFace: 'Arial' 
+                    slide.addText(`參、 ${phase}`, {
+                        x: 0.5, y: 0.4, w: '90%', h: 0.6,
+                        fontSize: 28, bold: true, color: '000000', fontFace: 'Arial'
                     });
 
                     // 副標題: (商品名稱填入)
-                    slide.addText(itemName, { 
-                        x: 0.5, y: 1.1, w: '90%', h: 0.5, 
+                    slide.addText(itemName, {
+                        x: 0.5, y: 1.1, w: '90%', h: 0.5,
                         fontSize: 24, bold: true, color: '009688', fontFace: 'Arial' // Teal color
                     });
 
@@ -412,14 +433,14 @@
                     if (execution) contentText += `${execution}`;
 
                     // 使用文字框顯示內容
-                    slide.addShape(pptx.shapes.RECTANGLE, { 
-                        x: 0.5, y: 1.8, w: 9, h: 3.5, 
-                        fill: 'FFFFFF', line: { color: 'AAAAAA', width: 1, dashType: 'solid' } 
+                    slide.addShape(pptx.shapes.RECTANGLE, {
+                        x: 0.5, y: 1.8, w: 9, h: 3.5,
+                        fill: 'FFFFFF', line: { color: 'AAAAAA', width: 1, dashType: 'solid' }
                     });
 
-                    slide.addText(contentText, { 
-                        x: 0.6, y: 1.9, w: 8.8, h: 3.3, 
-                        fontSize: 18, color: '333333', valign: 'top', fontFace: 'Arial' 
+                    slide.addText(contentText, {
+                        x: 0.6, y: 1.9, w: 8.8, h: 3.3,
+                        fontSize: 18, color: '333333', valign: 'top', fontFace: 'Arial'
                     });
                 }
             });
@@ -431,7 +452,6 @@
             // 下載檔案
             pptx.writeFile({ fileName: `製管會報告_${meetingDate.replace(/\//g, '')}.pptx` });
         }
-
 
         // ... (其他既有函數保持不變) ...
         function openMobileTOC() { /* ... */ const drawer = document.getElementById('mobile-toc-drawer'); const backdrop = document.getElementById('mobile-toc-backdrop'); if (!drawer || !backdrop) return; backdrop.classList.remove('hidden'); drawer.classList.remove('-translate-x-full'); document.body.classList.add('overflow-hidden'); }
@@ -454,19 +474,46 @@
                 link.title = rawItemName;
                 link.addEventListener('click', (e) => {
                     e.preventDefault();
-                    const targetElement = document.getElementById(targetId);
-                    if (targetElement) { targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+                    setActiveForm(targetId);
                     closeMobileTOC();
                 });
                 containerEl.appendChild(link);
             });
         }
-        function updateTOC() { const forms = Array.from(document.querySelectorAll('.tracking-form-instance')); renderTOCInto(document.getElementById('toc-container-desktop'), forms); renderTOCInto(document.getElementById('toc-container-mobile'), forms); }
+        function updateTOC() {
+            const forms = Array.from(document.querySelectorAll('.tracking-form-instance'));
+            renderTOCInto(document.getElementById('toc-container-desktop'), forms);
+            renderTOCInto(document.getElementById('toc-container-mobile'), forms);
+            updatePagerUI();
+        }
         function updateDetailedType(formElement, index) { /* ... */ const issueTypeSelect = formElement.querySelector(`#issue_type-${index}`); if (!issueTypeSelect) return; const detailedTypeContainer = formElement.querySelector(`#detailed-type-container-${index}`); const detailedTypeSelect = formElement.querySelector(`#detailed_type-${index}`); const selectedType = issueTypeSelect.value; const requiredDisplay = (selectedType in detailedOptionsMap && detailedOptionsMap[selectedType].length > 0); if (requiredDisplay) { detailedTypeContainer.classList.remove('hidden-collapse'); detailedTypeSelect.required = false; populateSelect(detailedTypeSelect, detailedOptionsMap[selectedType], "(請選擇詳細類型)"); } else { detailedTypeContainer.classList.add('hidden-collapse'); detailedTypeSelect.required = false; detailedTypeSelect.value = ''; } }
         function updateConditionalFields(formElement, index) { /* ... */ const issueTypeSelect = formElement.querySelector(`#issue_type-${index}`); if (!issueTypeSelect) return; const selectedType = issueTypeSelect.value; const isException = selectedType === '異常'; const isOptimizationProposal = selectedType === '優化提案'; const respFactoryContainer = formElement.querySelector(`#responsible-factory-container-${index}`); const respPartyContainer = formElement.querySelector(`#responsible-party-container-${index}`); const respFactorySelect = formElement.querySelector(`#responsible_factory-${index}`); const respPartySelect = formElement.querySelector(`#responsible_party-${index}`); if (isException) { respFactoryContainer.classList.remove('hidden-collapse'); respPartyContainer.classList.remove('hidden-collapse'); respFactorySelect.required = false; respPartySelect.required = false; } else { respFactoryContainer.classList.add('hidden-collapse'); respPartyContainer.classList.add('hidden-collapse'); respFactorySelect.required = false; respPartySelect.required = false; respFactorySelect.value = ''; respPartySelect.value = ''; } const nonAdoptionContainer = formElement.querySelector(`#non-adoption-container-${index}`); const nonAdoptionTextarea = formElement.querySelector(`#reason_for_non_adoption-${index}`); if (isOptimizationProposal) { nonAdoptionContainer.classList.remove('hidden-collapse'); nonAdoptionTextarea.required = false; } else { nonAdoptionContainer.classList.add('hidden-collapse'); nonAdoptionTextarea.required = false; nonAdoptionTextarea.value = ''; } }
         function reIndexForms() { const forms = document.querySelectorAll('.tracking-form-instance'); forms.forEach((form, newIndex) => { const titleElement = form.querySelector('.form-title'); if (titleElement) { titleElement.textContent = `試產資訊 #${newIndex + 1}`; } }); }
-        function removeFormInstance(formElement) { formElement.remove(); if (document.querySelectorAll('.tracking-form-instance').length === 0) { cloneAndInitializeForm(); } reIndexForms(); updateTOC(); }
+        function removeFormInstance(formElement) {
+            const wasActive = formElement.classList.contains('is-active');
+            const allBefore = Array.from(document.querySelectorAll('.tracking-form-instance'));
+            const removeIndex = allBefore.indexOf(formElement);
+
+            formElement.remove();
+
+            const forms = Array.from(document.querySelectorAll('.tracking-form-instance'));
+            if (forms.length === 0) {
+                cloneAndInitializeForm();
+                return;
+            }
+
+            // 若移除的是目前顯示的頁面，則切換到相鄰的一頁
+            if (wasActive) {
+                const nextCandidate = forms[Math.min(removeIndex, forms.length - 1)] || forms[0];
+                setActiveForm(nextCandidate.id);
+            }
+
+            reIndexForms();
+            updateTOC();
+        }
         function initializeFormInstance(formElement, index, dataToPreFill = {}) {
+            // 分頁容器 class（保險：若外部沒加到，這裡也補上）
+            formElement.classList.add('form-page');
             formElement.id = `tracking-form-instance-${index}`;
             const titleElement = formElement.querySelector('.form-title');
             if (titleElement) titleElement.textContent = `試產資訊 #${document.querySelectorAll('.tracking-form-instance').length}`;
@@ -512,12 +559,24 @@
             const newForm = templateForm.cloneNode(true);
             newForm.classList.remove('form-template');
             newForm.classList.add('tracking-form-instance');
+            newForm.classList.add('form-page');
+
             const currentForms = document.querySelectorAll('.tracking-form-instance');
             formsWrapper.appendChild(newForm);
+
             const uniqueIndex = formIndex++;
             initializeFormInstance(newForm, uniqueIndex, dataToPreFill);
-            if (!dataToPreFill && currentForms.length > 0) newForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+            // 新增後切到新頁面（避免無限往下延伸）
+            setActiveForm(newForm.id);
+
+            if (!dataToPreFill && currentForms.length > 0) {
+                const main = document.getElementById('main-container');
+                if (main) main.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+
             reIndexForms();
+            updateTOC();
         }
         function convertToCSV(data) {
             if (data.length === 0) return '';
@@ -591,6 +650,58 @@
             outputSection.scrollIntoView({ behavior: 'smooth' });
         }
 
+        function getFormsArray() {
+            return Array.from(document.querySelectorAll('.tracking-form-instance'));
+        }
+
+        function setActiveForm(targetId) {
+            const forms = getFormsArray();
+            if (forms.length === 0) return;
+
+            const target = document.getElementById(targetId) || forms[0];
+            forms.forEach(f => f.classList.remove('is-active'));
+            target.classList.add('is-active');
+
+            updatePagerUI();
+
+            // 切換頁面後回到表單上方（避免使用者迷路）
+            const main = document.getElementById('main-container');
+            if (main) main.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function updatePagerUI() {
+            const forms = getFormsArray();
+            const indicator = document.getElementById('pager-indicator');
+            const prevBtn = document.getElementById('prev-form-btn');
+            const nextBtn = document.getElementById('next-form-btn');
+
+            if (!indicator || !prevBtn || !nextBtn) return;
+
+            const activeIndex = Math.max(0, forms.findIndex(f => f.classList.contains('is-active')));
+            const total = forms.length;
+            const current = total === 0 ? 0 : activeIndex + 1;
+
+            indicator.textContent = `目前：${current} / ${total}`;
+            prevBtn.disabled = (total === 0 || activeIndex <= 0);
+            nextBtn.disabled = (total === 0 || activeIndex >= total - 1);
+        }
+
+        function goPrevForm() {
+            const forms = getFormsArray();
+            if (forms.length === 0) return;
+            const activeIndex = forms.findIndex(f => f.classList.contains('is-active'));
+            const target = forms[Math.max(0, activeIndex - 1)] || forms[0];
+            setActiveForm(target.id);
+        }
+
+        function goNextForm() {
+            const forms = getFormsArray();
+            if (forms.length === 0) return;
+            const activeIndex = forms.findIndex(f => f.classList.contains('is-active'));
+            const target = forms[Math.min(forms.length - 1, activeIndex + 1)] || forms[forms.length - 1];
+            setActiveForm(target.id);
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             const openBtn = document.getElementById('mobile-toc-open-btn');
             const closeBtn = document.getElementById('mobile-toc-close-btn');
@@ -598,8 +709,27 @@
             if (openBtn) openBtn.addEventListener('click', openMobileTOC);
             if (closeBtn) closeBtn.addEventListener('click', closeMobileTOC);
             if (backdrop) backdrop.addEventListener('click', closeMobileTOC);
-            if (preloadedData && preloadedData.length > 0) { preloadedData.forEach(data => { cloneAndInitializeForm(data); }); } else { cloneAndInitializeForm(); }
+            if (preloadedData && preloadedData.length > 0) {
+                preloadedData.forEach(data => { cloneAndInitializeForm(data); });
+            } else {
+                cloneAndInitializeForm();
+            }
+
+            // 預設顯示第一筆（若 cloneAndInitializeForm 已切到最後一筆，這裡保留最後一筆也可；
+            // 若你想固定顯示第一筆，把註解打開即可。）
+            const forms = getFormsArray();
+            if (forms.length > 0) {
+                // setActiveForm(forms[0].id);
+                setActiveForm(forms[forms.length - 1].id);
+            }
+
             updateTOC();
+
+            // 分頁按鈕
+            const prevBtn = document.getElementById('prev-form-btn');
+            const nextBtn = document.getElementById('next-form-btn');
+            if (prevBtn) prevBtn.addEventListener('click', goPrevForm);
+            if (nextBtn) nextBtn.addEventListener('click', goNextForm);
             document.getElementById('submit-all-btn').addEventListener('click', handleSubmission);
             
             // 綁定 PPT 下載按鈕事件
