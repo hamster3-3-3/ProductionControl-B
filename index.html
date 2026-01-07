@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
-<head>
+<html lang="zh-Hant"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>製管會項目填寫表單 (含PPT下載)</title>
@@ -8,6 +7,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- 引入 PptxGenJS 用於生成簡報 -->
     <script src="https://cdn.jsdelivr.net/gh/gitbrent/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
+    <!-- 引入 SheetJS（XLSX）用於 Excel 匯入 -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.19.3/dist/xlsx.full.min.js"></script>
 
     <style>
         /* 使用 Inter 字體 */
@@ -52,14 +53,13 @@
             }
         }
     </script>
-</head>
+<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.fixed{position:fixed}.sticky{position:sticky}.inset-0{inset:0px}.inset-y-0{top:0px;bottom:0px}.left-0{left:0px}.left-4{left:1rem}.top-4{top:1rem}.top-8{top:2rem}.z-40{z-index:40}.z-50{z-index:50}.mx-6{margin-left:1.5rem;margin-right:1.5rem}.mx-auto{margin-left:auto;margin-right:auto}.mb-1{margin-bottom:0.25rem}.mb-2{margin-bottom:0.5rem}.mb-3{margin-bottom:0.75rem}.mb-4{margin-bottom:1rem}.mb-6{margin-bottom:1.5rem}.ml-2{margin-left:0.5rem}.mr-3{margin-right:0.75rem}.mt-1{margin-top:0.25rem}.mt-2{margin-top:0.5rem}.mt-3{margin-top:0.75rem}.mt-4{margin-top:1rem}.mt-6{margin-top:1.5rem}.mt-8{margin-top:2rem}.block{display:block}.inline-block{display:inline-block}.flex{display:flex}.grid{display:grid}.hidden{display:none}.h-2{height:0.5rem}.h-32{height:8rem}.h-36{height:9rem}.h-5{height:1.25rem}.h-6{height:1.5rem}.max-h-64{max-height:16rem}.max-h-\[85vh\]{max-height:85vh}.w-2{width:0.5rem}.w-5{width:1.25rem}.w-72{width:18rem}.w-80{width:20rem}.w-full{width:100%}.max-w-7xl{max-width:80rem}.max-w-\[85vw\]{max-width:85vw}.flex-1{flex:1 1 0%}.flex-shrink-0{flex-shrink:0}.flex-grow{flex-grow:1}.-translate-x-full{--tw-translate-x:-100%;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.transform{transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.cursor-pointer{cursor:pointer}.resize-y{resize:vertical}.grid-cols-1{grid-template-columns:repeat(1, minmax(0, 1fr))}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-center{align-items:center}.justify-end{justify-content:flex-end}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-2{gap:0.5rem}.gap-3{gap:0.75rem}.gap-6{gap:1.5rem}.space-x-4 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(1rem * var(--tw-space-x-reverse));margin-left:calc(1rem * calc(1 - var(--tw-space-x-reverse)))}.space-y-2 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.5rem * var(--tw-space-y-reverse))}.space-y-4 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1rem * var(--tw-space-y-reverse))}.divide-y > :not([hidden]) ~ :not([hidden]){--tw-divide-y-reverse:0;border-top-width:calc(1px * calc(1 - var(--tw-divide-y-reverse)));border-bottom-width:calc(1px * var(--tw-divide-y-reverse))}.divide-gray-200 > :not([hidden]) ~ :not([hidden]){--tw-divide-opacity:1;border-color:rgb(229 231 235 / var(--tw-divide-opacity, 1))}.overflow-x-auto{overflow-x:auto}.overflow-y-auto{overflow-y:auto}.truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:0.5rem}.rounded-sm{border-radius:0.125rem}.rounded-xl{border-radius:0.75rem}.rounded-b-xl{border-bottom-right-radius:0.75rem;border-bottom-left-radius:0.75rem}.rounded-t-xl{border-top-left-radius:0.75rem;border-top-right-radius:0.75rem}.border{border-width:1px}.border-b{border-bottom-width:1px}.border-b-2{border-bottom-width:2px}.border-l-4{border-left-width:4px}.border-r{border-right-width:1px}.border-t{border-top-width:1px}.border-gray-200{--tw-border-opacity:1;border-color:rgb(229 231 235 / var(--tw-border-opacity, 1))}.border-gray-300{--tw-border-opacity:1;border-color:rgb(209 213 219 / var(--tw-border-opacity, 1))}.border-indigo-200{--tw-border-opacity:1;border-color:rgb(199 210 254 / var(--tw-border-opacity, 1))}.border-indigo-500{--tw-border-opacity:1;border-color:rgb(99 102 241 / var(--tw-border-opacity, 1))}.border-teal-100{--tw-border-opacity:1;border-color:rgb(204 251 241 / var(--tw-border-opacity, 1))}.border-teal-200{--tw-border-opacity:1;border-color:rgb(153 246 228 / var(--tw-border-opacity, 1))}.border-teal-500{--tw-border-opacity:1;border-color:rgb(20 184 166 / var(--tw-border-opacity, 1))}.bg-black\/40{background-color:rgb(0 0 0 / 0.4)}.bg-gray-100{--tw-bg-opacity:1;background-color:rgb(243 244 246 / var(--tw-bg-opacity, 1))}.bg-gray-50{--tw-bg-opacity:1;background-color:rgb(249 250 251 / var(--tw-bg-opacity, 1))}.bg-gray-800{--tw-bg-opacity:1;background-color:rgb(31 41 55 / var(--tw-bg-opacity, 1))}.bg-indigo-50\/50{background-color:rgb(238 242 255 / 0.5)}.bg-indigo-500{--tw-bg-opacity:1;background-color:rgb(99 102 241 / var(--tw-bg-opacity, 1))}.bg-indigo-600{--tw-bg-opacity:1;background-color:rgb(79 70 229 / var(--tw-bg-opacity, 1))}.bg-orange-600{--tw-bg-opacity:1;background-color:rgb(234 88 12 / var(--tw-bg-opacity, 1))}.bg-red-100{--tw-bg-opacity:1;background-color:rgb(254 226 226 / var(--tw-bg-opacity, 1))}.bg-slate-900{--tw-bg-opacity:1;background-color:rgb(15 23 42 / var(--tw-bg-opacity, 1))}.bg-teal-50\/50{background-color:rgb(240 253 250 / 0.5)}.bg-teal-500{--tw-bg-opacity:1;background-color:rgb(20 184 166 / var(--tw-bg-opacity, 1))}.bg-teal-600{--tw-bg-opacity:1;background-color:rgb(13 148 136 / var(--tw-bg-opacity, 1))}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.object-contain{object-fit:contain}.p-3{padding:0.75rem}.p-4{padding:1rem}.p-6{padding:1.5rem}.p-2{padding:0.5rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-4{padding-left:1rem;padding-right:1rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.px-8{padding-left:2rem;padding-right:2rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.py-8{padding-top:2rem;padding-bottom:2rem}.pb-2{padding-bottom:0.5rem}.pt-16{padding-top:4rem}.text-2xl{font-size:1.5rem;line-height:2rem}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:0.75rem;line-height:1rem}.font-bold{font-weight:700}.font-extrabold{font-weight:800}.font-semibold{font-weight:600}.font-medium{font-weight:500}.text-gray-400{--tw-text-opacity:1;color:rgb(156 163 175 / var(--tw-text-opacity, 1))}.text-gray-500{--tw-text-opacity:1;color:rgb(107 114 128 / var(--tw-text-opacity, 1))}.text-gray-600{--tw-text-opacity:1;color:rgb(75 85 99 / var(--tw-text-opacity, 1))}.text-gray-700{--tw-text-opacity:1;color:rgb(55 65 81 / var(--tw-text-opacity, 1))}.text-gray-800{--tw-text-opacity:1;color:rgb(31 41 55 / var(--tw-text-opacity, 1))}.text-green-300{--tw-text-opacity:1;color:rgb(134 239 172 / var(--tw-text-opacity, 1))}.text-green-700{--tw-text-opacity:1;color:rgb(21 128 61 / var(--tw-text-opacity, 1))}.text-indigo-700{--tw-text-opacity:1;color:rgb(67 56 202 / var(--tw-text-opacity, 1))}.text-red-700{--tw-text-opacity:1;color:rgb(185 28 28 / var(--tw-text-opacity, 1))}.text-teal-600{--tw-text-opacity:1;color:rgb(13 148 136 / var(--tw-text-opacity, 1))}.text-teal-700{--tw-text-opacity:1;color:rgb(4 120 118 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.shadow-2xl{--tw-shadow:0 25px 50px -12px rgb(0 0 0 / 0.25);--tw-shadow-colored:0 25px 50px -12px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-inner{--tw-shadow:inset 0 2px 4px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:inset 0 2px 4px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-lg{--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-md{--tw-shadow:0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-sm{--tw-shadow:0 1px 2px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-xl{--tw-shadow:0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.transition{transition-property:color, background-color, border-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-transform{transition-property:transform;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.duration-200{transition-duration:200ms}.duration-300{transition-duration:300ms}.duration-150{transition-duration:150ms}.file\:mr-4::file-selector-button{margin-right:1rem}.file\:rounded-lg::file-selector-button{border-radius:0.5rem}.file\:border-0::file-selector-button{border-width:0px}.file\:bg-teal-50::file-selector-button{--tw-bg-opacity:1;background-color:rgb(240 253 250 / var(--tw-bg-opacity, 1))}.file\:px-4::file-selector-button{padding-left:1rem;padding-right:1rem}.file\:py-2::file-selector-button{padding-top:0.5rem;padding-bottom:0.5rem}.file\:text-sm::file-selector-button{font-size:0.875rem;line-height:1.25rem}.file\:font-semibold::file-selector-button{font-weight:600}.file\:text-teal-700::file-selector-button{--tw-text-opacity:1;color:rgb(4 120 118 / var(--tw-text-opacity, 1))}.hover\:scale-105:hover{--tw-scale-x:1.05;--tw-scale-y:1.05;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.hover\:bg-gray-200:hover{--tw-bg-opacity:1;background-color:rgb(229 231 235 / var(--tw-bg-opacity, 1))}.hover\:bg-gray-50:hover{--tw-bg-opacity:1;background-color:rgb(249 250 251 / var(--tw-bg-opacity, 1))}.hover\:bg-indigo-700:hover{--tw-bg-opacity:1;background-color:rgb(67 56 202 / var(--tw-bg-opacity, 1))}.hover\:bg-orange-700:hover{--tw-bg-opacity:1;background-color:rgb(194 65 12 / var(--tw-bg-opacity, 1))}.hover\:bg-red-200:hover{--tw-bg-opacity:1;background-color:rgb(254 202 202 / var(--tw-bg-opacity, 1))}.hover\:bg-slate-800:hover{--tw-bg-opacity:1;background-color:rgb(30 41 59 / var(--tw-bg-opacity, 1))}.hover\:bg-teal-50:hover{--tw-bg-opacity:1;background-color:rgb(240 253 250 / var(--tw-bg-opacity, 1))}.hover\:bg-teal-700:hover{--tw-bg-opacity:1;background-color:rgb(4 120 118 / var(--tw-bg-opacity, 1))}.hover\:text-teal-700:hover{--tw-text-opacity:1;color:rgb(4 120 118 / var(--tw-text-opacity, 1))}.hover\:file\:bg-teal-100::file-selector-button:hover{--tw-bg-opacity:1;background-color:rgb(204 251 241 / var(--tw-bg-opacity, 1))}.focus\:border-indigo-500:focus{--tw-border-opacity:1;border-color:rgb(99 102 241 / var(--tw-border-opacity, 1))}.focus\:border-teal-500:focus{--tw-border-opacity:1;border-color:rgb(20 184 166 / var(--tw-border-opacity, 1))}.focus\:ring-4:focus{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(4px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000)}.focus\:ring-indigo-300:focus{--tw-ring-opacity:1;--tw-ring-color:rgb(165 180 252 / var(--tw-ring-opacity, 1))}.focus\:ring-indigo-500:focus{--tw-ring-opacity:1;--tw-ring-color:rgb(99 102 241 / var(--tw-ring-opacity, 1))}.focus\:ring-orange-300:focus{--tw-ring-opacity:1;--tw-ring-color:rgb(253 186 116 / var(--tw-ring-opacity, 1))}.focus\:ring-red-400:focus{--tw-ring-opacity:1;--tw-ring-color:rgb(248 113 113 / var(--tw-ring-opacity, 1))}.focus\:ring-slate-200:focus{--tw-ring-opacity:1;--tw-ring-color:rgb(226 232 240 / var(--tw-ring-opacity, 1))}.focus\:ring-teal-200:focus{--tw-ring-opacity:1;--tw-ring-color:rgb(153 246 228 / var(--tw-ring-opacity, 1))}.focus\:ring-teal-300:focus{--tw-ring-opacity:1;--tw-ring-color:rgb(94 234 212 / var(--tw-ring-opacity, 1))}.focus\:ring-teal-500:focus{--tw-ring-opacity:1;--tw-ring-color:rgb(20 184 166 / var(--tw-ring-opacity, 1))}.disabled\:cursor-not-allowed:disabled{cursor:not-allowed}.disabled\:opacity-40:disabled{opacity:0.4}@media (min-width: 768px){.md\:h-36{height:9rem}.md\:h-40{height:10rem}.md\:w-auto{width:auto}.md\:grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}.md\:flex-row{flex-direction:row}.md\:items-center{align-items:center}.md\:justify-between{justify-content:space-between}.md\:space-x-6 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(1.5rem * var(--tw-space-x-reverse));margin-left:calc(1.5rem * calc(1 - var(--tw-space-x-reverse)))}.md\:space-y-0 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0px * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0px * var(--tw-space-y-reverse))}.md\:p-8{padding:2rem}}@media (min-width: 1024px){.lg\:block{display:block}.lg\:hidden{display:none}.lg\:flex-row{flex-direction:row}.lg\:pt-0{padding-top:0px}}</style></head>
 
 <body class="p-4 md:p-8">
 
     <!-- ============ Mobile: 左上角「試產目錄」按鈕 + 抽屜式目錄（避免蓋住表單） ============ -->
     <div class="lg:hidden fixed top-4 left-4 z-50">
-        <button type="button" id="mobile-toc-open-btn"
-            class="flex items-center gap-2 px-4 py-2 bg-white text-teal-700 font-semibold rounded-xl shadow-lg border border-gray-200 hover:bg-teal-50 focus:ring-4 focus:ring-teal-200">
+        <button type="button" id="mobile-toc-open-btn" class="flex items-center gap-2 px-4 py-2 bg-white text-teal-700 font-semibold rounded-xl shadow-lg border border-gray-200 hover:bg-teal-50 focus:ring-4 focus:ring-teal-200">
             <span class="inline-block w-2 h-2 rounded-full bg-teal-500"></span>
             試產目錄
         </button>
@@ -69,19 +69,15 @@
     <div id="mobile-toc-backdrop" class="hidden lg:hidden fixed inset-0 z-40 bg-black/40"></div>
 
     <!-- 左側抽屜 -->
-    <aside id="mobile-toc-drawer"
-        class="lg:hidden fixed inset-y-0 left-0 z-50 w-80 max-w-[85vw] bg-white shadow-2xl border-r border-gray-200 transform -translate-x-full transition-transform duration-200 flex flex-col">
+    <aside id="mobile-toc-drawer" class="lg:hidden fixed inset-y-0 left-0 z-50 w-80 max-w-[85vw] bg-white shadow-2xl border-r border-gray-200 transform -translate-x-full transition-transform duration-200 flex flex-col">
         <div class="p-4 border-b border-gray-200 flex items-center justify-between flex-shrink-0">
             <h2 class="text-lg font-extrabold text-teal-700">試產目錄</h2>
-            <button type="button" id="mobile-toc-close-btn"
-                class="px-3 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold">
+            <button type="button" id="mobile-toc-close-btn" class="px-3 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold">
                 關閉
             </button>
         </div>
         <div class="p-4 flex-1 overflow-y-auto">
-            <div id="toc-container-mobile" class="space-y-2">
-                <p class="text-sm text-gray-400">點擊商品名稱快速跳轉...</p>
-            </div>
+            <div id="toc-container-mobile" class="space-y-2"><a href="#tracking-form-instance-1" class="block cursor-pointer p-2 text-sm font-medium text-gray-600 rounded-lg hover:bg-teal-50 hover:text-teal-700 transition duration-150 truncate" title="香蕉可可三明治">香蕉可可三明治</a><a href="#tracking-form-instance-2" class="block cursor-pointer p-2 text-sm font-medium text-gray-600 rounded-lg hover:bg-teal-50 hover:text-teal-700 transition duration-150 truncate" title="墨西哥辣醬熱狗堡">墨西哥辣醬熱狗堡</a><a href="#tracking-form-instance-3" class="block cursor-pointer p-2 text-sm font-medium text-gray-600 rounded-lg hover:bg-teal-50 hover:text-teal-700 transition duration-150 truncate" title="草莓優格三明治">草莓優格三明治</a><a href="#tracking-form-instance-4" class="block cursor-pointer p-2 text-sm font-medium text-gray-600 rounded-lg hover:bg-teal-50 hover:text-teal-700 transition duration-150 truncate" title="草莓厚奶雲餡泡芙">草莓厚奶雲餡泡芙</a><a href="#tracking-form-instance-5" class="block cursor-pointer p-2 text-sm font-medium text-gray-600 rounded-lg hover:bg-teal-50 hover:text-teal-700 transition duration-150 truncate" title="草莓貓貓塔">草莓貓貓塔</a><a href="#tracking-form-instance-6" class="block cursor-pointer p-2 text-sm font-medium text-gray-600 rounded-lg hover:bg-teal-50 hover:text-teal-700 transition duration-150 truncate" title="焗烤洋芋沙拉">焗烤洋芋沙拉</a></div>
         </div>
     </aside>
 
@@ -92,9 +88,7 @@
         <div class="hidden lg:block w-72 flex-shrink-0">
             <div class="sticky top-8 p-4 bg-white rounded-xl shadow-xl border border-gray-200 max-h-[85vh] overflow-y-auto">
                 <h2 class="text-xl font-bold text-teal-600 border-b-2 border-teal-100 pb-2 mb-3">試產目錄</h2>
-                <div id="toc-container-desktop" class="space-y-2">
-                    <p class="text-sm text-gray-400">點擊商品名稱快速跳轉...</p>
-                </div>
+                <div id="toc-container-desktop" class="space-y-2"><a href="#tracking-form-instance-1" class="block cursor-pointer p-2 text-sm font-medium text-gray-600 rounded-lg hover:bg-teal-50 hover:text-teal-700 transition duration-150 truncate" title="香蕉可可三明治">香蕉可可三明治</a><a href="#tracking-form-instance-2" class="block cursor-pointer p-2 text-sm font-medium text-gray-600 rounded-lg hover:bg-teal-50 hover:text-teal-700 transition duration-150 truncate" title="墨西哥辣醬熱狗堡">墨西哥辣醬熱狗堡</a><a href="#tracking-form-instance-3" class="block cursor-pointer p-2 text-sm font-medium text-gray-600 rounded-lg hover:bg-teal-50 hover:text-teal-700 transition duration-150 truncate" title="草莓優格三明治">草莓優格三明治</a><a href="#tracking-form-instance-4" class="block cursor-pointer p-2 text-sm font-medium text-gray-600 rounded-lg hover:bg-teal-50 hover:text-teal-700 transition duration-150 truncate" title="草莓厚奶雲餡泡芙">草莓厚奶雲餡泡芙</a><a href="#tracking-form-instance-5" class="block cursor-pointer p-2 text-sm font-medium text-gray-600 rounded-lg hover:bg-teal-50 hover:text-teal-700 transition duration-150 truncate" title="草莓貓貓塔">草莓貓貓塔</a><a href="#tracking-form-instance-6" class="block cursor-pointer p-2 text-sm font-medium text-gray-600 rounded-lg hover:bg-teal-50 hover:text-teal-700 transition duration-150 truncate" title="焗烤洋芋沙拉">焗烤洋芋沙拉</a></div>
             </div>
         </div>
 
@@ -108,42 +102,79 @@
                     <!-- 分頁導覽（一次顯示一筆表單） -->
                     <div class="mt-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
                         <div class="flex items-center gap-2">
-                            <button type="button" id="prev-form-btn"
-                                class="px-4 py-2 rounded-lg bg-white border border-gray-200 text-gray-700 font-semibold shadow-sm hover:bg-gray-50 focus:ring-4 focus:ring-teal-200 disabled:opacity-40 disabled:cursor-not-allowed">
+                            <button type="button" id="prev-form-btn" class="px-4 py-2 rounded-lg bg-white border border-gray-200 text-gray-700 font-semibold shadow-sm hover:bg-gray-50 focus:ring-4 focus:ring-teal-200 disabled:opacity-40 disabled:cursor-not-allowed" disabled="">
                                 上一筆
                             </button>
-                            <button type="button" id="next-form-btn"
-                                class="px-4 py-2 rounded-lg bg-white border border-gray-200 text-gray-700 font-semibold shadow-sm hover:bg-gray-50 focus:ring-4 focus:ring-teal-200 disabled:opacity-40 disabled:cursor-not-allowed">
+                            <button type="button" id="next-form-btn" class="px-4 py-2 rounded-lg bg-white border border-gray-200 text-gray-700 font-semibold shadow-sm hover:bg-gray-50 focus:ring-4 focus:ring-teal-200 disabled:opacity-40 disabled:cursor-not-allowed">
                                 下一筆
                             </button>
-                            <span id="pager-indicator" class="ml-2 text-sm text-gray-500">目前：0 / 0</span>
+                            <span id="pager-indicator" class="ml-2 text-sm text-gray-500">目前：1 / 6</span>
                         </div>
                         <div class="text-sm text-gray-500">
                             透過左側「試產目錄」點擊項目即可直接切換到該筆表單。
                         </div>
                     </div>
+
+                    <!-- ===== 匯入表格區塊（新增） ===== -->
+                    <div class="mt-4 p-4 bg-white rounded-xl border border-gray-200 shadow-sm">
+                        <div class="flex items-center gap-3 flex-wrap">
+                            <button type="button" id="btnOpenImport" class="px-4 py-2 rounded-lg bg-slate-900 text-white hover:bg-slate-800 focus:ring-4 focus:ring-slate-200 font-semibold">
+                                匯入表格（Excel/CSV/TXT）
+                            </button>
+
+                            <input id="fileImport" type="file" accept=".xlsx,.xls,.csv,.tsv,.txt" class="hidden">
+
+                            <button type="button" id="btnReplaceAll" class="px-3 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 font-semibold text-gray-700">
+                                匯入並覆蓋現有項目
+                            </button>
+
+                            
+
+                            <span class="text-sm text-gray-500">
+                                支援表頭：會議日期、品類、商品、階段、上市日、主事廠、副事廠（順序可不同）
+                            </span>
+                        </div>
+
+                        <details class="mt-3">
+                            <summary class="cursor-pointer text-sm text-gray-700">或直接貼上文字（TSV/CSV）</summary>
+                            <textarea id="txtImport" class="mt-2 w-full border rounded-lg p-3 text-sm" rows="6" placeholder="貼上含表頭資料，例如：
+會議日期\t品類\t商品\t階段\t上市日\t主事廠\t副事廠
+2025/12/31\t甜點\t草莓厚奶雲餡泡芙\t試產二\t1月7日\t屏榮大溪\t"></textarea>
+                            <div class="mt-2 flex gap-2 flex-wrap">
+                                <button id="btnParseText" type="button" class="px-3 py-2 rounded-lg border hover:bg-gray-50 font-semibold">
+                                    解析貼上內容（追加）
+                                </button>
+                                <button id="btnParseTextReplace" type="button" class="px-3 py-2 rounded-lg border hover:bg-gray-50 font-semibold">
+                                    解析貼上內容（覆蓋）
+                                </button>
+                                <button id="btnClearText" type="button" class="px-3 py-2 rounded-lg border hover:bg-gray-50">
+                                    清空
+                                </button>
+                            </div>
+                        </details>
+
+                        <div id="importStatus" class="mt-3 text-sm text-gray-600">匯入完成：6 筆（追加）</div>
+                    </div>
+                    <!-- ===== 匯入表格區塊（新增）End ===== -->
+
                 </div>
 
-                <div id="forms-wrapper" class="divide-y divide-gray-200">
-                    <!-- 表單將在此生成 -->
-                </div>
+                <div id="forms-wrapper" class="divide-y divide-gray-200"></div>
 
                 <!-- Master Action Buttons -->
                 <div class="flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-6 p-6 bg-gray-50 rounded-b-xl border-t border-gray-200">
-                    <button type="button" id="submit-all-btn"
-                            class="w-full md:w-auto px-8 py-3 bg-teal-600 text-white font-bold rounded-xl shadow-lg hover:bg-teal-700
+                    <button type="button" id="submit-all-btn" class="w-full md:w-auto px-8 py-3 bg-teal-600 text-white font-bold rounded-xl shadow-lg hover:bg-teal-700
                                     transition duration-300 transform hover:scale-105 focus:ring-4 focus:ring-teal-300 flex items-center justify-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
                         </svg>
                         上傳報表
                     </button>
 
-                    <button type="button" id="download-ppt-btn"
-                            class="w-full md:w-auto px-8 py-3 bg-orange-600 text-white font-bold rounded-xl shadow-lg hover:bg-orange-700
+                    <button type="button" id="download-ppt-btn" class="w-full md:w-auto px-8 py-3 bg-orange-600 text-white font-bold rounded-xl shadow-lg hover:bg-orange-700
                                     transition duration-300 transform hover:scale-105 focus:ring-4 focus:ring-orange-300 flex items-center justify-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path>
                         </svg>
                         下載簡報 (PPTX)
                     </button>
@@ -234,27 +265,22 @@
             <div class="px-6 mt-2 space-y-4">
                 <div>
                     <label for="item_description" class="block text-sm font-semibold text-gray-700 mb-1">項目說明</label>
-                    <textarea id="item_description" name="項目說明" rows="6"
-                        placeholder="請描述本次試產／架上品的異常狀況、優化重點或新增規範內容。"
-                        class="form-input h-36 md:h-40 resize-y focus:ring-teal-500 focus:border-teal-500"></textarea>
+                    <textarea id="item_description" name="項目說明" rows="6" placeholder="請描述本次試產／架上品的異常狀況、優化重點或新增規範內容。" class="form-input h-36 md:h-40 resize-y focus:ring-teal-500 focus:border-teal-500"></textarea>
                 </div>
                 <div>
                     <label for="execution_instructions" class="block text-sm font-semibold text-gray-700 mb-1">執行說明</label>
-                    <textarea id="execution_instructions" name="執行說明" rows="6"
-                        placeholder="請填寫後續處理方式、修正作法、試產調整方向。"
-                        class="form-input h-36 md:h-40 resize-y focus:ring-teal-500 focus:border-teal-500"></textarea>
+                    <textarea id="execution_instructions" name="執行說明" rows="6" placeholder="請填寫後續處理方式、修正作法、試產調整方向。" class="form-input h-36 md:h-40 resize-y focus:ring-teal-500 focus:border-teal-500"></textarea>
                 </div>
 
                 <!-- 照片上傳 -->
                 <div>
                     <label for="issue_photo" class="block text-sm font-semibold text-gray-700 mb-1">照片上傳（異常/優化佐證）</label>
-                    <input type="file" id="issue_photo" name="照片檔" accept="image/*"
-                        class="form-input bg-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-teal-50 file:text-teal-700 hover:file:bg-teal-100" />
-                    <input type="hidden" id="issue_photo_data" name="照片資料" value="" />
+                    <input type="file" id="issue_photo" name="照片檔" accept="image/*" class="form-input bg-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-teal-50 file:text-teal-700 hover:file:bg-teal-100">
+                    <input type="hidden" id="issue_photo_data" name="照片資料" value="">
                     <div class="mt-3">
                         <div class="text-xs text-gray-500 mb-2">建議：拍攝/上傳後會自動壓縮（加速PPT生成、避免檔案過大）。</div>
                         <div class="w-full border border-gray-200 rounded-xl bg-white p-3">
-                            <img id="issue_photo_preview" alt="照片預覽" class="hidden w-full max-h-64 object-contain rounded-lg" />
+                            <img id="issue_photo_preview" alt="照片預覽" class="hidden w-full max-h-64 object-contain rounded-lg">
                             <div id="issue_photo_empty" class="text-sm text-gray-400">尚未上傳照片</div>
                         </div>
                     </div>
@@ -262,16 +288,13 @@
 
                 <div>
                     <label for="remarks" class="block text-sm font-semibold text-gray-700 mb-1">備註</label>
-                    <textarea id="remarks" name="備註" rows="5"
-                        placeholder="補充說明其他未涵蓋事項。"
-                        class="form-input h-32 md:h-36 resize-y focus:ring-teal-500 focus:border-teal-500"></textarea>
+                    <textarea id="remarks" name="備註" rows="5" placeholder="補充說明其他未涵蓋事項。" class="form-input h-32 md:h-36 resize-y focus:ring-teal-500 focus:border-teal-500"></textarea>
                 </div>
             </div>
 
             <div id="non-adoption-container" class="px-6 mt-6 hidden-collapse">
                 <label for="reason_for_non_adoption" class="block text-sm font-semibold text-gray-700 mb-1">不採用原因(優化)</label>
-                <textarea id="reason_for_non_adoption" name="不採用原因(優化)" rows="4" placeholder="請填寫不採納此優化提案的具體原因。"
-                    class="form-input resize-y focus:ring-teal-500 focus:border-teal-500"></textarea>
+                <textarea id="reason_for_non_adoption" name="不採用原因(優化)" rows="4" placeholder="請填寫不採納此優化提案的具體原因。" class="form-input resize-y focus:ring-teal-500 focus:border-teal-500"></textarea>
             </div>
         </div>
 
@@ -299,11 +322,7 @@
             '新增規範': [], '': []
         };
 
-        // ====== ✅ 已預載資料（依你提供的表格；共 2 筆） ======
-        const preloadedData = [
-            { meeting_date: '2025-12-31', category: '甜點', item_name: '草莓厚奶雲餡泡芙', phase: '試產二', launch_date: '2026-01-07', main_factory: '屏榮大溪', sub_factory: '' },
-            { meeting_date: '2025-12-31', category: '沙拉', item_name: '焗烤洋芋沙拉', phase: '試產二', launch_date: '2026-01-07', main_factory: '屏榮新豐', sub_factory: '' }
-        ];
+        const preloadedData = [{"item_name":"香蕉可可三明治","meeting_date":"2026-01-08","launch_date":"2026-03-04","category":"三明治(調理麵包)","phase":"試產一","main_factory":"屏榮新豐","sub_factory":""},{"item_name":"墨西哥辣醬熱狗堡","meeting_date":"2026-01-08","launch_date":"2026-01-14","category":"三明治(調理麵包)","phase":"試產二","main_factory":"屏榮新豐","sub_factory":""},{"item_name":"草莓優格三明治","meeting_date":"2026-01-08","launch_date":"2026-01-14","category":"三明治(調理麵包)","phase":"試產二","main_factory":"屏榮新豐","sub_factory":""},{"item_name":"草莓厚奶雲餡泡芙","meeting_date":"2026-01-08","launch_date":"2027-01-07","category":"甜點","phase":"架上品","main_factory":"屏榮大溪","sub_factory":""},{"item_name":"草莓貓貓塔","meeting_date":"2026-01-08","launch_date":"2026-01-14","category":"甜點","phase":"試產二","main_factory":"屏榮大溪","sub_factory":""},{"item_name":"焗烤洋芋沙拉","meeting_date":"2026-01-08","launch_date":"2027-01-07","category":"沙拉","phase":"架上品","main_factory":"屏榮新豐","sub_factory":""}];
 
         // ===== Google Apps Script Web App 設定 =====
         const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycby4EafDJN6B6El3M6vL4-qFiWAIxW1_1JZ_TL9QKsj3ggX-d7Dvg7lX0H_ju5l2f0ltIg/exec";
@@ -794,12 +813,9 @@
                     'sub_factory': dataToPreFill.sub_factory || ''
                 };
                 for (const [key, value] of Object.entries(fields)) {
-                    if (value !== undefined && value !== null && String(value) !== '') {
+                    if (value) {
                         const input = formElement.querySelector(`#${key}${suffix}`);
                         if (input) input.value = value;
-                    } else {
-                        const input = formElement.querySelector(`#${key}${suffix}`);
-                        if (input && (key === 'launch_date' || key === 'sub_factory')) input.value = '';
                     }
                 }
             }
@@ -1075,7 +1091,364 @@
 
             const pptBtn = document.getElementById('download-ppt-btn');
             if (pptBtn) pptBtn.addEventListener('click', () => generatePPT());
+
+            // ====== 匯入表格：事件綁定（新增） ======
+            const btnOpenImport = document.getElementById("btnOpenImport");
+            const fileImport = document.getElementById("fileImport");
+            const status = document.getElementById("importStatus");
+
+            const txtImport = document.getElementById("txtImport");
+            const btnParseText = document.getElementById("btnParseText");
+            const btnParseTextReplace = document.getElementById("btnParseTextReplace");
+            const btnClearText = document.getElementById("btnClearText");
+
+            const btnReplaceAll = document.getElementById("btnReplaceAll");
+
+            if (btnOpenImport && fileImport) {
+                btnOpenImport.addEventListener("click", () => fileImport.click());
+
+                fileImport.addEventListener("change", async (e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+
+                    try {
+                        status.textContent = `讀取中：${file.name}`;
+                        const imported = await parseFileToImportObjects(file);
+                        const prefills = imported.map(toPreFillObject);
+                        applyImportedPrefills(prefills, "append");
+                        status.textContent = `匯入完成：${prefills.length} 筆（追加）`;
+                    } catch (err) {
+                        console.error(err);
+                        status.textContent = `匯入失敗：${err.message || err}`;
+                    } finally {
+                        fileImport.value = "";
+                    }
+                });
+            }
+
+            if (btnReplaceAll && fileImport) {
+                btnReplaceAll.addEventListener("click", () => {
+                    const handler = async (e) => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+                        try {
+                            status.textContent = `讀取中：${file.name}`;
+                            const imported = await parseFileToImportObjects(file);
+                            const prefills = imported.map(toPreFillObject);
+                            applyImportedPrefills(prefills, "replace");
+                            status.textContent = `匯入完成：${prefills.length} 筆（覆蓋）`;
+                        } catch (err) {
+                            console.error(err);
+                            status.textContent = `匯入失敗：${err.message || err}`;
+                        } finally {
+                            fileImport.value = "";
+                            fileImport.removeEventListener("change", handler);
+                        }
+                    };
+                    fileImport.addEventListener("change", handler);
+                    fileImport.click();
+                });
+            }
+
+            if (btnParseText && txtImport) {
+                btnParseText.addEventListener("click", () => {
+                    try {
+                        const imported = parsePastedTextToImportObjects(txtImport.value);
+                        const prefills = imported.map(toPreFillObject);
+                        applyImportedPrefills(prefills, "append");
+                        status.textContent = `匯入完成：${prefills.length} 筆（貼上追加）`;
+                    } catch (err) {
+                        console.error(err);
+                        status.textContent = `解析失敗：${err.message || err}`;
+                    }
+                });
+            }
+
+            if (btnParseTextReplace && txtImport) {
+                btnParseTextReplace.addEventListener("click", () => {
+                    try {
+                        const imported = parsePastedTextToImportObjects(txtImport.value);
+                        const prefills = imported.map(toPreFillObject);
+                        applyImportedPrefills(prefills, "replace");
+                        status.textContent = `匯入完成：${prefills.length} 筆（貼上覆蓋）`;
+                    } catch (err) {
+                        console.error(err);
+                        status.textContent = `解析失敗：${err.message || err}`;
+                    }
+                });
+            }
+
+            if (btnClearText && txtImport) {
+                btnClearText.addEventListener("click", () => {
+                    txtImport.value = "";
+                    if (status) status.textContent = "";
+                });
+            }
         });
+
+        // ====== 匯入表格：解析/套用（新增） ======
+        const IMPORT_HEADERS = ["會議日期","品類","商品","階段","上市日","主事廠","副事廠"];
+        const IMPORT_ALIASES = {
+            "會議日期": ["會議日期","會議日","日期","meeting_date"],
+            "品類": ["品類","分類","category"],
+            "商品": ["商品","商品名稱","品名","item","item_name"],
+            "階段": ["階段","階別","phase"],
+            "上市日": ["上市日","上市日期","launch_date"],
+            "主事廠": ["主事廠","主廠","主責工廠","main_factory"],
+            "副事廠": ["副事廠","副廠","協力工廠","sub_factory"]
+        };
+
+        function _norm(s) {
+            return String(s ?? "").replace(/\s+/g, "").replace(/：/g, "").trim().toLowerCase();
+        }
+
+        function _detectDelimiter(line) {
+            if (line.includes("\t")) return "\t";
+            if (line.includes(",")) return ",";
+            return "\t";
+        }
+
+        function _splitLine(line, delimiter) {
+            return line.split(delimiter).map(v => String(v ?? "").trim());
+        }
+
+        function _excelSerialToYMD(serial) {
+            const n = Number(serial);
+            if (!isFinite(n)) return "";
+            const utcMs = Math.round((n - 25569) * 86400 * 1000);
+            const d = new Date(utcMs);
+            if (isNaN(d.getTime())) return "";
+            const y = d.getUTCFullYear();
+            const m = String(d.getUTCMonth() + 1).padStart(2, "0");
+            const dd = String(d.getUTCDate()).padStart(2, "0");
+            return `${y}-${m}-${dd}`;
+        }
+
+        function _toDateInputValue(value, meetingDateYMD = "") {
+            if (value === null || value === undefined) return "";
+            const v = String(value).trim();
+            if (!v) return "";
+
+            if (/^\d{4}-\d{2}-\d{2}$/.test(v)) return v;
+
+            const m1 = v.match(/^(\d{4})[\/\.](\d{1,2})[\/\.](\d{1,2})$/);
+            if (m1) {
+                const y = m1[1];
+                const m = String(Number(m1[2])).padStart(2, "0");
+                const d = String(Number(m1[3])).padStart(2, "0");
+                return `${y}-${m}-${d}`;
+            }
+
+            const m2 = v.match(/^(\d{1,2})\/(\d{1,2})$/);
+            if (m2) {
+                const mm = Number(m2[1]);
+                const dd = Number(m2[2]);
+                const base = meetingDateYMD || "";
+                let y = base ? Number(base.slice(0,4)) : new Date().getFullYear();
+                if (base) {
+                    const baseM = Number(base.slice(5,7));
+                    const baseD = Number(base.slice(8,10));
+                    if (mm < baseM || (mm === baseM && dd < baseD)) y += 1;
+                }
+                return `${y}-${String(mm).padStart(2,"0")}-${String(dd).padStart(2,"0")}`;
+            }
+
+            const m3 = v.match(/^(\d{1,2})\s*月\s*(\d{1,2})\s*日$/);
+            if (m3) {
+                const mm = Number(m3[1]);
+                const dd = Number(m3[2]);
+                const base = meetingDateYMD || "";
+                let y = base ? Number(base.slice(0,4)) : new Date().getFullYear();
+                if (base) {
+                    const baseM = Number(base.slice(5,7));
+                    const baseD = Number(base.slice(8,10));
+                    if (mm < baseM || (mm === baseM && dd < baseD)) y += 1;
+                }
+                return `${y}-${String(mm).padStart(2,"0")}-${String(dd).padStart(2,"0")}`;
+            }
+
+            if (/^\d{5,6}(\.\d+)?$/.test(v)) {
+                const ymd = _excelSerialToYMD(v);
+                if (ymd) return ymd;
+            }
+
+            return "";
+        }
+
+        function _buildHeaderIndex(headerRow) {
+            const headerNorm = headerRow.map(h => _norm(h));
+            const idx = {};
+
+            for (const key of IMPORT_HEADERS) {
+                const aliases = IMPORT_ALIASES[key] || [key];
+                let found = -1;
+                for (const a of aliases) {
+                    const i = headerNorm.findIndex(h => h === _norm(a));
+                    if (i >= 0) { found = i; break; }
+                }
+                if (found >= 0) idx[key] = found;
+            }
+            return idx;
+        }
+
+        function _mapAoaToImportObjects(aoa) {
+            const header = aoa[0] || [];
+            const idx = _buildHeaderIndex(header);
+
+            const missing = IMPORT_HEADERS.filter(h => idx[h] === undefined);
+            if (missing.length) throw new Error("缺少欄位：" + missing.join("、"));
+
+            const out = [];
+            for (let r = 1; r < aoa.length; r++) {
+                const row = aoa[r] || [];
+                const obj = {};
+                for (const h of IMPORT_HEADERS) obj[h] = String(row[idx[h]] ?? "").trim();
+                if (obj["商品"]) out.push(obj);
+            }
+            return out;
+        }
+
+        async function parseFileToImportObjects(file) {
+            const ext = (file.name.split(".").pop() || "").toLowerCase();
+
+            if (ext === "xlsx" || ext === "xls") {
+                if (typeof XLSX === "undefined") throw new Error("未載入 XLSX 套件。");
+                const ab = await file.arrayBuffer();
+                const wb = XLSX.read(ab, { type: "array" });
+                const wsName = wb.SheetNames[0];
+                const ws = wb.Sheets[wsName];
+                const aoa = XLSX.utils.sheet_to_json(ws, { header: 1, raw: true, defval: "" });
+                return _mapAoaToImportObjects(aoa);
+            }
+
+            const text = await file.text();
+            const lines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+            if (lines.length < 2) throw new Error("至少需要 1 行表頭 + 1 行資料。");
+            const delimiter = _detectDelimiter(lines[0]);
+            const aoa = lines.map(line => _splitLine(line, delimiter));
+            return _mapAoaToImportObjects(aoa);
+        }
+
+        function parsePastedTextToImportObjects(text) {
+            const lines = String(text || "").split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+            if (lines.length < 2) throw new Error("至少需要 1 行表頭 + 1 行資料。");
+            const delimiter = _detectDelimiter(lines[0]);
+            const aoa = lines.map(line => _splitLine(line, delimiter));
+            return _mapAoaToImportObjects(aoa);
+        }
+
+        function toPreFillObject(importObj) {
+            const meetingYMD = _toDateInputValue(importObj["會議日期"]);
+            return {
+                item_name: importObj["商品"] || "",
+                meeting_date: meetingYMD,
+                launch_date: _toDateInputValue(importObj["上市日"], meetingYMD),
+                category: importObj["品類"] || "",
+                phase: importObj["階段"] || "",
+                main_factory: importObj["主事廠"] || "",
+                sub_factory: importObj["副事廠"] || ""
+            };
+        }
+
+        function _clearAllFormInstances() {
+            const wrapper = document.getElementById("forms-wrapper");
+            if (!wrapper) return;
+            wrapper.innerHTML = "";
+            formIndex = 0;
+        }
+
+        function applyImportedPrefills(prefills, mode = "append") {
+            if (!Array.isArray(prefills) || prefills.length === 0) return;
+
+            if (mode === "replace") {
+                _clearAllFormInstances();
+            }
+
+            prefills.forEach(p => cloneAndInitializeForm(p));
+
+            const forms = getFormsArray();
+            if (forms.length > 0) setActiveForm(forms[0].id);
+            updateTOC();
+        }
     </script>
+
+    <!-- Add-on: 單一按鈕「輸出成網頁表格」＝輸出整頁網頁（含資料） -->
+    
+
+
+
+
+<script>
+(function(){
+  "use strict";
+  const payloads = [{"商品":"香蕉可可三明治","會議日期":"2026-01-08","上市日":"2026-03-04","品類":"三明治(調理麵包)","階段":"試產一","主事廠":"屏榮新豐","副事廠":"","提出者":"","類型":"","詳細類型":"","責任廠":"","責任端":"","記錄者":"","項目說明":"","執行說明":"","照片資料":"","備註":"","不採用原因(優化)":""},{"商品":"墨西哥辣醬熱狗堡","會議日期":"2026-01-08","上市日":"2026-01-14","品類":"三明治(調理麵包)","階段":"試產二","主事廠":"屏榮新豐","副事廠":"","提出者":"","類型":"","詳細類型":"","責任廠":"","責任端":"","記錄者":"","項目說明":"","執行說明":"","照片資料":"","備註":"","不採用原因(優化)":""},{"商品":"草莓優格三明治","會議日期":"2026-01-08","上市日":"2026-01-14","品類":"三明治(調理麵包)","階段":"試產二","主事廠":"屏榮新豐","副事廠":"","提出者":"","類型":"","詳細類型":"","責任廠":"","責任端":"","記錄者":"","項目說明":"","執行說明":"","照片資料":"","備註":"","不採用原因(優化)":""},{"商品":"草莓厚奶雲餡泡芙","會議日期":"2026-01-08","上市日":"2027-01-07","品類":"甜點","階段":"架上品","主事廠":"屏榮大溪","副事廠":"","提出者":"","類型":"","詳細類型":"","責任廠":"","責任端":"","記錄者":"","項目說明":"","執行說明":"","照片資料":"","備註":"","不採用原因(優化)":""},{"商品":"草莓貓貓塔","會議日期":"2026-01-08","上市日":"2026-01-14","品類":"甜點","階段":"試產二","主事廠":"屏榮大溪","副事廠":"","提出者":"","類型":"","詳細類型":"","責任廠":"","責任端":"","記錄者":"","項目說明":"","執行說明":"","照片資料":"","備註":"","不採用原因(優化)":""},{"商品":"焗烤洋芋沙拉","會議日期":"2026-01-08","上市日":"2027-01-07","品類":"沙拉","階段":"架上品","主事廠":"屏榮新豐","副事廠":"","提出者":"","類型":"","詳細類型":"","責任廠":"","責任端":"","記錄者":"","項目說明":"","執行說明":"","照片資料":"","備註":"","不採用原因(優化)":""}];
+
+  function setByName(form, name, value){
+    const els = form.querySelectorAll('[name="'+CSS.escape(name)+'"]');
+    if(!els || els.length===0) return;
+
+    if(els.length>1 && els[0].type && String(els[0].type).toLowerCase()==="radio"){
+      els.forEach(el=>{ el.checked = (String(el.value??"")===String(value??"")); });
+      return;
+    }
+
+    const el = els[0];
+    const tag = (el.tagName||"").toLowerCase();
+    const type = (el.type||"").toLowerCase();
+
+    if(tag==="input" && type==="checkbox"){
+      el.checked = !!value && String(value).trim()!=="" && String(value)!=="0";
+      return;
+    }
+
+    el.value = String(value ?? "");
+  }
+
+  function trigger(form, name){
+    const el = form.querySelector('[name="'+CSS.escape(name)+'"]');
+    if(el){
+      el.dispatchEvent(new Event('change', { bubbles:true }));
+      el.dispatchEvent(new Event('input', { bubbles:true }));
+    }
+  }
+
+  function applyPhotoPreview(form){
+    const hidden = form.querySelector('input[name="照片資料"]');
+    if(!hidden) return;
+    const dataUrl = String(hidden.value || "");
+    const img = form.querySelector('img[id^="issue_photo_preview-"]');
+    const empty = form.querySelector('div[id^="issue_photo_empty-"]');
+    if(!img || !empty) return;
+    if(dataUrl && dataUrl.startsWith("data:image/")){
+      img.src = dataUrl;
+      img.classList.remove("hidden");
+      empty.classList.add("hidden");
+    }else{
+      img.src = "";
+      img.classList.add("hidden");
+      empty.classList.remove("hidden");
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', ()=>{
+    const forms = Array.from(document.querySelectorAll('.tracking-form-instance'));
+    forms.forEach((form, i)=>{
+      const p = payloads[i] || {};
+      if(p["類型"]!==undefined){ setByName(form,"類型",p["類型"]); trigger(form,"類型"); }
+      if(p["詳細類型"]!==undefined){ setByName(form,"詳細類型",p["詳細類型"]); trigger(form,"詳細類型"); }
+      Object.keys(p).forEach((k)=>{
+        if(k==="類型"||k==="詳細類型") return;
+        setByName(form,k,p[k]);
+      });
+      trigger(form,"品類");
+      trigger(form,"階段");
+      trigger(form,"主事廠");
+      trigger(form,"副事廠");
+      applyPhotoPreview(form);
+    });
+  });
+})();
+</script>
 </body>
 </html>
+
